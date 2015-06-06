@@ -1,3 +1,6 @@
+# ide specific
+.settings/
+
 # node specific
 node_modules/
 npm-debug.log
