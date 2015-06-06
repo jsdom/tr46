@@ -23,7 +23,7 @@ request.get("http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt", fu
     var end = parseInt(range[1] || range[0], 16);
     cells[0] = [start, end];
     
-    if (cells[2]) {
+    if (cells[2] !== undefined) {
       // parse replacement to int[] array
       var replacement = cells[2].split(" ");
       if (replacement[0] === "") { // empty array
