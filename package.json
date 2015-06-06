@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
+    "pretest": "node scripts/getLatestUnicodeTests.js",
     "prepublish": "node scripts/generate_mapping_table.js"
   },
   "repository": {
