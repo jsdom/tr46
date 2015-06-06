@@ -55,11 +55,11 @@ function mapChars(domain_name, useSTD3, processing_option) {
       case "ignored":
         break;
       case "mapped":
-        processed += String.fromCodePoint(status[2]);
+        processed += String.fromCodePoint.apply(String, status[2]);
         break;
       case "deviation":
         if (processing_option === PROCESSING_OPTIONS.TRANSITIONAL) {
-          processed += String.fromCodePoint(status[2]);
+          processed += String.fromCodePoint.apply(String, status[2]);
         } else {
           processed += String.fromCodePoint(codePoint);
         }
@@ -69,7 +69,7 @@ function mapChars(domain_name, useSTD3, processing_option) {
         break;
       case "disallowed_STD3_mapped":
         if (useSTD3) {
-          processed += String.fromCodePoint(status[2]);
+          processed += String.fromCodePoint.apply(String, status[2]);
         } else {
           hasError = true;
           processed += String.fromCodePoint(codePoint);
