@@ -43,5 +43,5 @@ request.get("http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt", fu
   // we could drop valid chars, but those are only ~1000 ranges and
   // binary search is way to quick to even notice that
   
-  fs.writeFile(__dirname + "/../lib/mapping_table.json", JSON.stringify(lines));
+  fs.writeFile(__dirname + "/../lib/mappingTable.json", JSON.stringify(lines));
 });

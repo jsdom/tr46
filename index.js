@@ -1,7 +1,7 @@
 "use strict";
 
 var punycode = require("punycode");
-var mappingTable = require("./lib/mapping_table.json");
+var mappingTable = require("./lib/mappingTable.json");
 
 var PROCESSING_OPTIONS = {
   TRANSITIONAL: 0,

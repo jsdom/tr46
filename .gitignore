@@ -6,5 +6,5 @@ node_modules/
 npm-debug.log
 
 # project specific
-lib/mapping_table.json
+lib/mappingTable.json
 test/unicode/
