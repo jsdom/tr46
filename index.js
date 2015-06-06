@@ -93,7 +93,7 @@ function mapChars(domain_name, useSTD3, processing_option) {
 
 function validateLabel(label, processing_option) {
   if (label.substr(0, 4) === "xn--") {
-    label = punycode.toUnicode(label.substr(4));
+    label = punycode.toUnicode(label);
     processing_option = PROCESSING_OPTIONS.NONTRANSITIONAL;
   }
   
