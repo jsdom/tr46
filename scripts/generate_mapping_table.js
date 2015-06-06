@@ -3,7 +3,7 @@
 var fs = require("fs");
 var request = require("request");
 
-request.get("http://www.unicode.org/Public/idna/7.0.0/IdnaMappingTable.txt", function(err, res, body) {
+request.get("http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt", function(err, res, body) {
   if (err) {
     throw err;
   }
