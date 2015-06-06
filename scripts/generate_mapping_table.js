@@ -4,6 +4,10 @@ var fs = require("fs");
 var request = require("request");
 
 request.get("http://www.unicode.org/Public/idna/7.0.0/IdnaMappingTable.txt", function(err, res, body) {
+  if (err) {
+    throw err;
+  }
+  
   var lines = [];
   
   body.split("\n").forEach(function(l) {
