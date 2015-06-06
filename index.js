@@ -147,7 +147,7 @@ function processing(domain_name, useSTD3, processing_option) {
 }
 
 module.exports.toASCII = function(domain_name, useSTD3, processing_option, verifyDnsLength) {
-  var result = processing(domain_name, useSTD3, processing);
+  var result = processing(domain_name, useSTD3, processing_option);
   var labels = result.string.split(".");
   labels = labels.map(function(l) {
     try {
