@@ -8,13 +8,17 @@ var PROCESSING_OPTIONS = {
   NONTRANSITIONAL: 1
 };
 
+function normalize(str) { // fix bug in v8
+  return str.split('\000').map(function (s) { return s.normalize('NFC'); }).join('\000');
+}
+
 function findStatus(val) {
   var start = 0;
   var end = mappingTable.length - 1;
-  
+
   while (start <= end) {
     var mid = Math.floor((start + end) / 2);
-    
+
     var target = mappingTable[mid];
     if (target[0][0] <= val && target[0][1] >= val) {
       return target;
@@ -24,7 +28,7 @@ function findStatus(val) {
       start = mid + 1;
     }
   }
-  
+
   return null;
 }
 
@@ -41,12 +45,12 @@ function countSymbols(string) {
 function mapChars(domain_name, useSTD3, processing_option) {
   var hasError = false;
   var processed = "";
-  
+
   var len = countSymbols(domain_name);
   for (var i = 0; i < len; ++i) {
     var codePoint = domain_name.codePointAt(i);
     var status = findStatus(codePoint);
-    
+
     switch (status[1]) {
       case "disallowed":
         hasError = true;
@@ -79,12 +83,12 @@ function mapChars(domain_name, useSTD3, processing_option) {
         if (useSTD3) {
           hasError = true;
         }
-        
+
         processed += String.fromCodePoint(codePoint);
         break;
     }
   }
-  
+
   return {
     string: processed,
     error: hasError
@@ -98,17 +102,17 @@ function validateLabel(label, processing_option) {
     label = punycode.toUnicode(label);
     processing_option = PROCESSING_OPTIONS.NONTRANSITIONAL;
   }
-  
+
   var error = false;
-  
-  if (label.normalize("NFC") !== label ||
+
+  if (normalize(label) !== label ||
       (label[3] === "-" && label[4] === "-") ||
       label[0] === "-" || label[label.length - 1] === "-" ||
       label.indexOf(".") !== -1 ||
       label.search(combiningMarksRegex) === 0) {
     error = true;
   }
-  
+
   var len = countSymbols(label);
   for (var i = 0; i < len; ++i) {
     var status = findStatus(label.codePointAt(i));
@@ -119,7 +123,7 @@ function validateLabel(label, processing_option) {
       break;
     }
   }
-  
+
   return {
     label: label,
     error: error
@@ -128,8 +132,8 @@ function validateLabel(label, processing_option) {
 
 function processing(domain_name, useSTD3, processing_option) {
   var result = mapChars(domain_name, useSTD3, processing_option);
-  result.string = result.string.normalize("NFC");
-  
+  result.string = normalize(result.string);
+
   var labels = result.string.split(".");
   for (var i = 0; i < labels.length; ++i) {
     try {
@@ -140,7 +144,7 @@ function processing(domain_name, useSTD3, processing_option) {
       result.error = true;
     }
   }
-  
+
   return {
     string: labels.join("."),
     error: result.error
@@ -158,13 +162,13 @@ module.exports.toASCII = function(domain_name, useSTD3, processing_option, verif
       return l;
     }
   });
-  
+
   if (verifyDnsLength) {
     var total = labels.slice(0, labels.length - 1).join(".").length;
     if (total.length > 253 || total.length === 0) {
       result.error = true;
     }
-    
+
     for (var i=0; i < labels.length; ++i) {
       if (labels.length > 63 || labels.length === 0) {
         result.error = true;
@@ -172,14 +176,14 @@ module.exports.toASCII = function(domain_name, useSTD3, processing_option, verif
       }
     }
   }
-  
+
   if (result.error) return null;
   return labels.join(".");
 };
 
 module.exports.toUnicode = function(domain_name, useSTD3) {
   var result = processing(domain_name, useSTD3, PROCESSING_OPTIONS.NONTRANSITIONAL);
-  
+
   return {
     domain: result.string,
     error: result.error
