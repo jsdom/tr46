@@ -9,7 +9,7 @@ var PROCESSING_OPTIONS = {
 };
 
 function normalize(str) { // fix bug in v8
-  return str.split('\000').map(function (s) { return s.normalize('NFC'); }).join('\000');
+  return str.split('\u0000').map(function (s) { return s.normalize('NFC'); }).join('\u0000');
 }
 
 function findStatus(val) {
