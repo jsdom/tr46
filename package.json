@@ -24,6 +24,9 @@
     "url": "https://github.com/Sebmaster/tr46.js/issues"
   },
   "homepage": "https://github.com/Sebmaster/tr46.js#readme",
+  "dependencies": {
+    "punycode": "^2.1.0"
+  },
   "devDependencies": {
     "mocha": "^2.2.5",
     "request": "^2.57.0"
