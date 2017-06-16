@@ -4,11 +4,6 @@ const punycode = require("punycode");
 const regexes = require("./lib/regexes.js");
 const mappingTable = require("./lib/mappingTable.json");
 
-const PROCESSING_OPTIONS = {
-  TRANSITIONAL: 0,
-  NONTRANSITIONAL: 1
-};
-
 function containsNonASCII(str) {
   return /[^\x00-\x7F]/.test(str);
 }
@@ -33,7 +28,7 @@ function findStatus(val) {
   return null;
 }
 
-function mapChars(domainName, useSTD3, processingOption) {
+function mapChars(domainName, { useSTD3ASCIIRules, processingOption }) {
   let hasError = false;
   let processed = "";
 
@@ -51,7 +46,7 @@ function mapChars(domainName, useSTD3, processingOption) {
         processed += mapping;
         break;
       case "deviation":
-        if (processingOption === PROCESSING_OPTIONS.TRANSITIONAL) {
+        if (processingOption === "transitional") {
           processed += mapping;
         } else {
           processed += ch;
@@ -61,7 +56,7 @@ function mapChars(domainName, useSTD3, processingOption) {
         processed += ch;
         break;
       case "disallowed_STD3_mapped":
-        if (useSTD3) {
+        if (useSTD3ASCIIRules) {
           hasError = true;
           processed += ch;
         } else {
@@ -69,7 +64,7 @@ function mapChars(domainName, useSTD3, processingOption) {
         }
         break;
       case "disallowed_STD3_valid":
-        if (useSTD3) {
+        if (useSTD3ASCIIRules) {
           hasError = true;
         }
 
@@ -84,7 +79,7 @@ function mapChars(domainName, useSTD3, processingOption) {
   };
 }
 
-function validateLabel(label, processingOption, checkHyphens, checkBidi, checkJoiners) {
+function validateLabel(label, { checkHyphens, checkBidi, checkJoiners, processingOption }) {
   if (label.normalize("NFC") !== label) {
     return false;
   }
@@ -105,8 +100,8 @@ function validateLabel(label, processingOption, checkHyphens, checkBidi, checkJo
 
   for (const ch of codePoints) {
     const [status] = findStatus(ch.codePointAt(0));
-    if ((processingOption === PROCESSING_OPTIONS.TRANSITIONAL && status !== "valid") ||
-        (processingOption === PROCESSING_OPTIONS.NONTRANSITIONAL &&
+    if ((processingOption === "transitional" && status !== "valid") ||
+        (processingOption === "nontransitional" &&
          status !== "valid" && status !== "deviation")) {
       return false;
     }
@@ -165,9 +160,11 @@ function validateLabel(label, processingOption, checkHyphens, checkBidi, checkJo
   return true;
 }
 
-function processing(domainName, useSTD3, checkHyphens, checkBidi, checkJoiners, processingOption) {
+function processing(domainName, options) {
+  const { processingOption } = options;
+
   // 1. Map.
-  let { string, error } = mapChars(domainName, useSTD3, processingOption);
+  let { string, error } = mapChars(domainName, options);
 
   // 2. Normalize.
   string = string.normalize("NFC");
@@ -187,14 +184,14 @@ function processing(domainName, useSTD3, checkHyphens, checkBidi, checkJoiners, 
         error = true;
         continue;
       }
-      curProcessing = PROCESSING_OPTIONS.NONTRANSITIONAL;
+      curProcessing = "nontransitional";
     }
 
     // No need to validate if we already know there is an error.
     if (error) {
       continue;
     }
-    const validation = validateLabel(label, curProcessing, checkHyphens, checkBidi, checkJoiners);
+    const validation = validateLabel(label, Object.assign({}, options, { processingOption: curProcessing }));
     if (!validation) {
       error = true;
     }
@@ -206,20 +203,25 @@ function processing(domainName, useSTD3, checkHyphens, checkBidi, checkJoiners, 
   };
 }
 
-module.exports.toASCII = (domainName, useSTD3, processingOption, verifyDnsLength, checkHyphens, checkBidi,
-                          checkJoiners) => {
-  // Defaults maintain compatibility with currently published version of UTS #46 (rev. 17).
-  if (checkHyphens === undefined) {
-    checkHyphens = true;
-  }
-  if (checkBidi === undefined) {
-    checkBidi = false;
-  }
-  if (checkJoiners === undefined) {
-    checkJoiners = false;
+function toASCII(domainName, {
+  checkHyphens = false,
+  checkBidi = false,
+  checkJoiners = false,
+  useSTD3ASCIIRules = false,
+  processingOption = "nontransitional",
+  verifyDNSLength = false
+} = {}) {
+  if (processingOption !== "transitional" && processingOption !== "nontransitional") {
+    throw new RangeError("processingOption must be either transitional or nontransitional");
   }
 
-  const result = processing(domainName, useSTD3, checkHyphens, checkBidi, checkJoiners, processingOption);
+  const result = processing(domainName, {
+    processingOption,
+    checkHyphens,
+    checkBidi,
+    checkJoiners,
+    useSTD3ASCIIRules
+  });
   let labels = result.string.split(".");
   labels = labels.map(l => {
     if (containsNonASCII(l)) {
@@ -232,7 +234,7 @@ module.exports.toASCII = (domainName, useSTD3, processingOption, verifyDnsLength
     return l;
   });
 
-  if (verifyDnsLength) {
+  if (verifyDNSLength) {
     const total = labels.join(".").length;
     if (total > 253 || total === 0) {
       result.error = true;
@@ -250,26 +252,29 @@ module.exports.toASCII = (domainName, useSTD3, processingOption, verifyDnsLength
     return null;
   }
   return labels.join(".");
-};
+}
 
-module.exports.toUnicode = (domainName, useSTD3, checkHyphens, checkBidi, checkJoiners) => {
-  // Defaults maintain compatibility with currently published version of UTS #46 (rev. 17).
-  if (checkHyphens === undefined) {
-    checkHyphens = true;
-  }
-  if (checkBidi === undefined) {
-    checkBidi = false;
-  }
-  if (checkJoiners === undefined) {
-    checkJoiners = false;
-  }
-  const result = processing(domainName, useSTD3, checkHyphens, checkBidi, checkJoiners,
-                            PROCESSING_OPTIONS.NONTRANSITIONAL);
+function toUnicode(domainName, {
+  checkHyphens = false,
+  checkBidi = false,
+  checkJoiners = false,
+  useSTD3ASCIIRules = false
+} = {}) {
+  const result = processing(domainName, {
+    processingOption: "nontransitional",
+    checkHyphens,
+    checkBidi,
+    checkJoiners,
+    useSTD3ASCIIRules
+  });
 
   return {
     domain: result.string,
     error: result.error
   };
-};
+}
 
-module.exports.PROCESSING_OPTIONS = PROCESSING_OPTIONS;
+module.exports = {
+  toASCII,
+  toUnicode
+};

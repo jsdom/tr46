@@ -26,7 +26,14 @@ function normalize(inp) {
 }
 
 function testConversionOption(test, option) {
-  const out = tr46.toASCII(test[1], true, option, true, true, true, true);
+  const out = tr46.toASCII(test[1], {
+    checkHyphens: true,
+    checkBidi: true,
+    checkJoiners: true,
+    useSTD3ASCIIRules: true,
+    processingOption: option,
+    verifyDNSLength: true
+  });
 
   if ((test[3] || test[2])[0] === "[") { // Error code
     assert.equal(out, null, "toASCII should result in an error");
@@ -40,15 +47,20 @@ function testConversionOption(test, option) {
 function testConversion(test) {
   return () => {
     if (test[0] === "B" || test[0] === "N") {
-      testConversionOption(test, tr46.PROCESSING_OPTIONS.NONTRANSITIONAL);
+      testConversionOption(test, "nontransitional");
     }
 
     if (test[0] === "B" || test[0] === "T") {
-      testConversionOption(test, tr46.PROCESSING_OPTIONS.TRANSITIONAL);
+      testConversionOption(test, "transitional");
     }
 
     // ToUnicode is always non-transitional.
-    const res = tr46.toUnicode(test[1], true, true, true, true);
+    const res = tr46.toUnicode(test[1], {
+      checkHyphens: true,
+      checkBidi: true,
+      checkJoiners: true,
+      useSTD3ASCIIRules: true
+    });
     if (test[2][0] === "[") { // Error code
       assert.ok(res.error, "ToUnicode should result in an error");
     } else {
@@ -70,7 +82,7 @@ for (const l of lines) {
   }
 }
 
-describe("Web Platform Tests", () => {
+describe("IdnaTest.txt", () => {
   for (const test of testCases) {
     it("Converting <" + test[1] + "> with type " + test[0], testConversion(test));
   }
