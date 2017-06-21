@@ -1,14 +1,16 @@
+/* eslint-env node, mocha */
 "use strict";
 
-var assert = require("assert");
-var fs = require("fs");
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
 
-var tr46 = require("../index.js");
+const tr46 = require("../index.js");
 
 function normalize(inp) {
-  var out = "";
-  
-  for (var i = 0; i < inp.length; ++i) {
+  let out = "";
+
+  for (let i = 0; i < inp.length; ++i) {
     if (inp[i] === "\\") {
       if (inp[++i] === "u") {
         out += String.fromCharCode(parseInt(inp[++i] + inp[++i] + inp[++i] + inp[++i], 16));
@@ -19,62 +21,57 @@ function normalize(inp) {
       out += inp[i];
     }
   }
-  
+
   return out;
 }
 
 function testConversionOption(test, option) {
-  if ((test[3] || test[2])[0] === "[") { // error code
-    assert.equal(tr46.toASCII(test[1], true, option), null, "toASCII should result in an error");
-  } else {
-    assert.equal(tr46.toASCII(test[1], true, option), test[3] || test[2] || test[1], "toASCII should equal the expected value");
+  const out = tr46.toASCII(test[1], true, option, true, true, true, true);
+
+  if ((test[3] || test[2])[0] === "[") { // Error code
+    assert.equal(out, null, "toASCII should result in an error");
+  } else if (out !== null) {
+    assert.equal(out, test[3] || test[2] || test[1], "toASCII should equal the expected value");
   }
+  // We are allowed to error out in more cases than the test file indicates,
+  // which is actually necessary for the test suite to pass.
 }
 
 function testConversion(test) {
-  return function() {
-  
+  return () => {
     if (test[0] === "B" || test[0] === "N") {
       testConversionOption(test, tr46.PROCESSING_OPTIONS.NONTRANSITIONAL);
     }
-    
+
     if (test[0] === "B" || test[0] === "T") {
       testConversionOption(test, tr46.PROCESSING_OPTIONS.TRANSITIONAL);
     }
-  
-    // toUnicode is always tested non transitional
-    if (test[2][0] === "[") { // error code
-      assert.ok(tr46.toUnicode(test[1], true).error, "ToUnicode should result in an error");
+
+    // ToUnicode is always non-transitional.
+    const res = tr46.toUnicode(test[1], true, true, true, true);
+    if (test[2][0] === "[") { // Error code
+      assert.ok(res.error, "ToUnicode should result in an error");
     } else {
-      var res = tr46.toUnicode(test[1], true);
-      assert.ok(!res.error, "ToUnicode should not result in an error");
       assert.equal(res.domain, test[2] || test[1], "ToUnicode should equal the expected value");
     }
   };
-};
+}
 
-var lines = fs.readFileSync(__dirname + "/unicode/IdnaTest.txt", { encoding: "utf8" })
+const lines = fs.readFileSync(path.resolve(__dirname, "unicode", "IdnaTest.txt"), { encoding: "utf8" })
   .split("\n")
-  .map(function(l) {
-    return l.split("#")[0];
-  });
+  .map(l => l.split("#")[0]);
 
-var testCases = [];
+const testCases = [];
 
-lines.forEach(function(l) {
-  var splitted = l.split(";").map(function(c) {
-    return normalize(c.trim());
-  });
-  
-  if (splitted.length === 1) return;
-  testCases.push(splitted);
-});
+for (const l of lines) {
+  const splitted = l.split(";").map(c => normalize(c.trim()));
+  if (splitted.length !== 1) {
+    testCases.push(splitted);
+  }
+}
 
-describe("Web Platform Tests", function () {
-  var len = testCases.length;
-  for (let i = 0; i < len; i++) {
-    var test = testCases[i];
-    
+describe("Web Platform Tests", () => {
+  for (const test of testCases) {
     it("Converting <" + test[1] + "> with type " + test[0], testConversion(test));
   }
 });

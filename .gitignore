@@ -7,4 +7,5 @@ npm-debug.log
 
 # project specific
 lib/mappingTable.json
+lib/regexes.js
 test/unicode/
