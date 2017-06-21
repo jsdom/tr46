@@ -1,9 +1,8 @@
 language: node_js
 node_js:
-  - "4"
+  - "6"
   - "stable"
 
 script:
   - npm run lint
-  - node index.js # check for syntax errors
-  # no `npm test` because https://github.com/Sebmaster/tr46.js/issues/6
+  - npm test

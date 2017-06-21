@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const request = require("request");
 
-request.get("http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt", (err, res, body) => {
+request.get("http://www.unicode.org/Public/idna/10.0.0/IdnaMappingTable.txt", (err, res, body) => {
   if (err) {
     throw err;
   }
@@ -37,7 +37,7 @@ request.get("http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt", (e
         return parseInt(r, 16);
       });
 
-      cells[2] = replacement;
+      cells[2] = String.fromCodePoint(...replacement);
     }
 
     lines.push(cells);
@@ -46,5 +46,5 @@ request.get("http://www.unicode.org/Public/idna/latest/IdnaMappingTable.txt", (e
   // We could drop valid chars, but those are only ~1000 ranges and
   // binary search is way to quick to even notice that
 
-  fs.writeFile(path.resolve(__dirname, "../lib/mappingTable.json"), JSON.stringify(lines));
+  fs.writeFileSync(path.resolve(__dirname, "../lib/mappingTable.json"), JSON.stringify(lines));
 });

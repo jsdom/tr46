@@ -5,13 +5,14 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "lib/mappingTable.json"
+    "lib/mappingTable.json",
+    "lib/regexes.js"
   ],
   "scripts": {
     "test": "mocha",
-    "lint": "eslint index.js scripts",
+    "lint": "eslint .",
     "pretest": "node scripts/getLatestUnicodeTests.js",
-    "prepublish": "node scripts/generateMappingTable.js"
+    "prepublish": "node scripts/generateMappingTable.js && node scripts/generateRegexes.js"
   },
   "repository": "Sebmaster/tr46.js",
   "keywords": [
@@ -28,6 +29,8 @@
   "devDependencies": {
     "eslint": "^3.13.0",
     "mocha": "^3.2.0",
-    "request": "^2.79.0"
+    "regenerate": "^1.3.2",
+    "request": "^2.79.0",
+    "unicode-10.0.0": "^0.7.4"
   }
 }
