@@ -57,6 +57,8 @@ const regexes = {
   // BIDI Rule
   // https://tools.ietf.org/html/rfc5893#section-2
 
+  bidiDomain: r`${regenerate([...cp.R, ...cp.AL, ...cp.AN])}`,
+
   // Step 1
   bidiS1LTR: r`${regenerate(cp.L)}`,
   bidiS1RTL: r`${regenerate([...cp.R, ...cp.AL])}`,

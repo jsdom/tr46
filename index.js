@@ -152,6 +152,8 @@ function validateLabel(label, { checkHyphens, checkBidi, checkJoiners, processin
 function processing(domainName, options) {
   const { processingOption } = options;
 
+  const isBidiDomain = regexes.bidiDomain.test(domainName);
+
   // 1. Map.
   let { string, error } = mapChars(domainName, options);
 
@@ -180,7 +182,10 @@ function processing(domainName, options) {
     if (error) {
       continue;
     }
-    const validation = validateLabel(label, Object.assign({}, options, { processingOption: curProcessing }));
+    const validation = validateLabel(label, Object.assign({}, options, {
+      processingOption: curProcessing,
+      checkBidi: options.checkBidi && isBidiDomain
+    }));
     if (!validation) {
       error = true;
     }
