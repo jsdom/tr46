@@ -69,7 +69,7 @@ function testConversion(test) {
   };
 }
 
-const lines = fs.readFileSync(path.resolve(__dirname, "unicode", "IdnaTest.txt"), { encoding: "utf8" })
+const lines = fs.readFileSync(path.resolve(__dirname, "fixtures", "IdnaTest.txt"), { encoding: "utf8" })
   .split("\n")
   .map(l => l.split("#")[0]);
 

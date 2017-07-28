@@ -11,7 +11,7 @@
   "scripts": {
     "test": "mocha",
     "lint": "eslint .",
-    "pretest": "node scripts/getLatestUnicodeTests.js",
+    "pretest": "node scripts/getLatestTests.js",
     "prepublish": "node scripts/generateMappingTable.js && node scripts/generateRegexes.js"
   },
   "repository": "Sebmaster/tr46.js",
