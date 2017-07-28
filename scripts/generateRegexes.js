@@ -59,7 +59,7 @@ const regexes = {
 
   // Step 1
   bidiS1LTR: r`${regenerate(cp.L)}`,
-  bidiS1RTL: r`${regenerate([...cp.R, cp.AL])}`,
+  bidiS1RTL: r`${regenerate([...cp.R, ...cp.AL])}`,
 
   // Step 2
   bidiS2: r`^${
