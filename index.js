@@ -149,10 +149,22 @@ function validateLabel(label, { checkHyphens, checkBidi, checkJoiners, processin
   return true;
 }
 
+function isBidiDomain(labels) {
+  const domain = labels.map(label => {
+    if (label.startsWith("xn--")) {
+      try {
+        return punycode.decode(label.substring(4));
+      } catch (err) {
+        return "";
+      }
+    }
+    return label;
+  }).join(".");
+  return regexes.bidiDomain.test(domain);
+}
+
 function processing(domainName, options) {
   const { processingOption } = options;
-
-  const isBidiDomain = regexes.bidiDomain.test(domainName);
 
   // 1. Map.
   let { string, error } = mapChars(domainName, options);
@@ -162,6 +174,7 @@ function processing(domainName, options) {
 
   // 3. Break.
   const labels = string.split(".");
+  const isBidi = isBidiDomain(labels);
 
   // 4. Convert/Validate.
   for (const [i, origLabel] of labels.entries()) {
@@ -184,7 +197,7 @@ function processing(domainName, options) {
     }
     const validation = validateLabel(label, Object.assign({}, options, {
       processingOption: curProcessing,
-      checkBidi: options.checkBidi && isBidiDomain
+      checkBidi: options.checkBidi && isBidi
     }));
     if (!validation) {
       error = true;
