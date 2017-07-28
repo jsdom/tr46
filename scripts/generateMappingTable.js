@@ -3,8 +3,9 @@
 const fs = require("fs");
 const path = require("path");
 const request = require("request");
+const { unicodeVersion } = require("../package.json");
 
-request.get("http://www.unicode.org/Public/idna/10.0.0/IdnaMappingTable.txt", (err, res, body) => {
+request.get(`http://www.unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`, (err, res, body) => {
   if (err) {
     throw err;
   }

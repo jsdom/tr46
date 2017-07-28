@@ -8,7 +8,8 @@ if (process.env.NO_UPDATE) {
 const fs = require("fs");
 const path = require("path");
 const request = require("request");
+const { unicodeVersion } = require("../package.json");
 
 const target = fs.createWriteStream(path.resolve(__dirname, "../test/unicode/IdnaTest.txt"));
-request.get("http://www.unicode.org/Public/idna/10.0.0/IdnaTest.txt")
+request.get(`http://www.unicode.org/Public/idna/${unicodeVersion}/IdnaTest.txt`)
   .pipe(target);

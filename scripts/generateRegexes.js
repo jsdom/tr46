@@ -3,25 +3,26 @@
 const fs = require("fs");
 const path = require("path");
 const regenerate = require("regenerate");
+const { unicodeVersion } = require("../package.json");
 
 /* eslint-disable global-require */
 const cp = {
-  Mark: require("unicode-10.0.0/General_Category/Mark/code-points.js"),
+  Mark: require(`unicode-${unicodeVersion}/General_Category/Mark/code-points.js`),
   JT: require("./unicode/Joining_Type"),
   CombiningClassVirama: require("./unicode/Canonical_Combining_Class").Virama,
 
   // https://tools.ietf.org/html/rfc5893#section-1.4
-  L: require("unicode-10.0.0/Bidi_Class/Left_To_Right/code-points.js"),
-  R: require("unicode-10.0.0/Bidi_Class/Right_To_Left/code-points.js"),
-  AL: require("unicode-10.0.0/Bidi_Class/Arabic_Letter/code-points.js"),
-  EN: require("unicode-10.0.0/Bidi_Class/European_Number/code-points.js"),
-  ES: require("unicode-10.0.0/Bidi_Class/European_Separator/code-points.js"),
-  ET: require("unicode-10.0.0/Bidi_Class/European_Terminator/code-points.js"),
-  AN: require("unicode-10.0.0/Bidi_Class/Arabic_Number/code-points.js"),
-  CS: require("unicode-10.0.0/Bidi_Class/Common_Separator/code-points.js"),
-  NSM: require("unicode-10.0.0/Bidi_Class/Nonspacing_Mark/code-points.js"),
-  BN: require("unicode-10.0.0/Bidi_Class/Boundary_Neutral/code-points.js"),
-  ON: require("unicode-10.0.0/Bidi_Class/Other_Neutral/code-points.js")
+  L: require(`unicode-${unicodeVersion}/Bidi_Class/Left_To_Right/code-points.js`),
+  R: require(`unicode-${unicodeVersion}/Bidi_Class/Right_To_Left/code-points.js`),
+  AL: require(`unicode-${unicodeVersion}/Bidi_Class/Arabic_Letter/code-points.js`),
+  EN: require(`unicode-${unicodeVersion}/Bidi_Class/European_Number/code-points.js`),
+  ES: require(`unicode-${unicodeVersion}/Bidi_Class/European_Separator/code-points.js`),
+  ET: require(`unicode-${unicodeVersion}/Bidi_Class/European_Terminator/code-points.js`),
+  AN: require(`unicode-${unicodeVersion}/Bidi_Class/Arabic_Number/code-points.js`),
+  CS: require(`unicode-${unicodeVersion}/Bidi_Class/Common_Separator/code-points.js`),
+  NSM: require(`unicode-${unicodeVersion}/Bidi_Class/Nonspacing_Mark/code-points.js`),
+  BN: require(`unicode-${unicodeVersion}/Bidi_Class/Boundary_Neutral/code-points.js`),
+  ON: require(`unicode-${unicodeVersion}/Bidi_Class/Other_Neutral/code-points.js`)
 };
 /* eslint-enable global-require */
 
