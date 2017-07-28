@@ -8,7 +8,7 @@ function containsNonASCII(str) {
   return /[^\x00-\x7F]/.test(str);
 }
 
-function findStatus(val) {
+function findStatus(val, { useSTD3ASCIIRules }) {
   let start = 0;
   let end = mappingTable.length - 1;
 
@@ -17,6 +17,10 @@ function findStatus(val) {
 
     const target = mappingTable[mid];
     if (target[0][0] <= val && target[0][1] >= val) {
+      if (target[1].startsWith("disallowed_STD3_")) {
+        const newStatus = useSTD3ASCIIRules ? "disallowed" : target[1].slice(16);
+        return [newStatus, ...target.slice(2)];
+      }
       return target.slice(1);
     } else if (target[0][0] > val) {
       end = mid - 1;
@@ -33,7 +37,7 @@ function mapChars(domainName, { useSTD3ASCIIRules, processingOption }) {
   let processed = "";
 
   for (const ch of domainName) {
-    const [status, mapping] = findStatus(ch.codePointAt(0));
+    const [status, mapping] = findStatus(ch.codePointAt(0), { useSTD3ASCIIRules });
 
     switch (status) {
       case "disallowed":
@@ -55,21 +59,6 @@ function mapChars(domainName, { useSTD3ASCIIRules, processingOption }) {
       case "valid":
         processed += ch;
         break;
-      case "disallowed_STD3_mapped":
-        if (useSTD3ASCIIRules) {
-          hasError = true;
-          processed += ch;
-        } else {
-          processed += mapping;
-        }
-        break;
-      case "disallowed_STD3_valid":
-        if (useSTD3ASCIIRules) {
-          hasError = true;
-        }
-
-        processed += ch;
-        break;
     }
   }
 
@@ -79,7 +68,7 @@ function mapChars(domainName, { useSTD3ASCIIRules, processingOption }) {
   };
 }
 
-function validateLabel(label, { checkHyphens, checkBidi, checkJoiners, processingOption }) {
+function validateLabel(label, { checkHyphens, checkBidi, checkJoiners, processingOption, useSTD3ASCIIRules }) {
   if (label.normalize("NFC") !== label) {
     return false;
   }
@@ -99,7 +88,7 @@ function validateLabel(label, { checkHyphens, checkBidi, checkJoiners, processin
   }
 
   for (const ch of codePoints) {
-    const [status] = findStatus(ch.codePointAt(0));
+    const [status] = findStatus(ch.codePointAt(0), { useSTD3ASCIIRules });
     if ((processingOption === "transitional" && status !== "valid") ||
         (processingOption === "nontransitional" &&
          status !== "valid" && status !== "deviation")) {
