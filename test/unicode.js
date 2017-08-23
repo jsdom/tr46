@@ -45,13 +45,23 @@ function testConversionOption(test, option) {
 }
 
 function testConversion(test) {
-  return () => {
+  return function () {
     if (test[0] === "B" || test[0] === "N") {
       testConversionOption(test, "nontransitional");
     }
 
     if (test[0] === "B" || test[0] === "T") {
       testConversionOption(test, "transitional");
+    }
+
+    // If the ToUnicode error code is [A4_2], it means that the test is buggy. See
+    // https://github.com/Sebmaster/tr46.js/pull/13#issuecomment-318874337.
+
+    // The `this.skip()` line below will show the entire test is skipped in Mocha's output, but in fact toASCII is still
+    // tested above (and an error will be thrown if toASCII breaks).
+    if (test[2].trim() === "[A4_2]") {
+      this.skip(); // eslint-disable-line no-invalid-this
+      return;
     }
 
     // ToUnicode is always non-transitional.
