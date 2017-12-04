@@ -1,6 +1,9 @@
 {
   "name": "tr46",
   "version": "1.0.1",
+  "engines": {
+    "node": ">=6"
+  },
   "description": "An implementation of the Unicode TR46 spec",
   "main": "index.js",
   "files": [
