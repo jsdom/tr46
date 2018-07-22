@@ -38,7 +38,7 @@ function r(strings, ...regs) {
 
 const regexes = {
   // Validity criteria
-  // http://www.unicode.org/reports/tr46/#Validity_Criteria
+  // https://unicode.org/reports/tr46/#Validity_Criteria
 
   // Step 5
   combiningMarks: r`${regenerate(cp.Mark)}`,
