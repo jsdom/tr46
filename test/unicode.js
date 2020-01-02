@@ -25,8 +25,8 @@ function normalize(inp) {
   return out;
 }
 
-function testConversionOption(test, option) {
-  const out = tr46.toASCII(test[1], {
+function testConversionOption(source, expected, status, option) {
+  const out = tr46.toASCII(source, {
     checkHyphens: true,
     checkBidi: true,
     checkJoiners: true,
@@ -35,65 +35,84 @@ function testConversionOption(test, option) {
     verifyDNSLength: true
   });
 
-  if ((test[3] || test[2])[0] === "[") { // Error code
+  if (status) { // Error code
     assert.equal(out, null, "toASCII should result in an error");
   } else if (out !== null) {
-    assert.equal(out, test[3] || test[2] || test[1], "toASCII should equal the expected value");
+    assert.equal(out, expected, "toASCII should equal the expected value");
+  } else {
+    // We are allowed to error out in more cases than the test file indicates,
+    // which is actually necessary for the test suite to pass.
   }
-  // We are allowed to error out in more cases than the test file indicates,
-  // which is actually necessary for the test suite to pass.
 }
 
 function testConversion(test) {
   return function () {
-    if (test[0] === "B" || test[0] === "N") {
-      testConversionOption(test, "nontransitional");
-    }
+    testConversionOption(test.source, test.toASCIIN, test.toASCIINStatus, "nontransitional");
+    testConversionOption(test.source, test.toASCIIT, test.toASCIITStatus, "transitional");
 
-    if (test[0] === "B" || test[0] === "T") {
-      testConversionOption(test, "transitional");
-    }
-
-    // If the ToUnicode error code is [A4_2], it means that the test is buggy. See
-    // https://github.com/Sebmaster/tr46.js/pull/13#issuecomment-318874337.
-
-    // The `this.skip()` line below will show the entire test is skipped in Mocha's output, but in fact toASCII is still
-    // tested above (and an error will be thrown if toASCII breaks).
-    if (test[2].trim() === "[A4_2]") {
-      this.skip(); // eslint-disable-line no-invalid-this
-      return;
-    }
-
-    // ToUnicode is always non-transitional.
-    const res = tr46.toUnicode(test[1], {
+    const res = tr46.toUnicode(test.source, {
       checkHyphens: true,
       checkBidi: true,
       checkJoiners: true,
-      useSTD3ASCIIRules: true
+      useSTD3ASCIIRules: true,
+      processingOption: "nontransitional"
     });
-    if (test[2][0] === "[") { // Error code
+    if (test.toUnicodeStatus) { // Error code
       assert.ok(res.error, "ToUnicode should result in an error");
     } else {
-      assert.equal(res.domain, test[2] || test[1], "ToUnicode should equal the expected value");
+      assert.equal(res.domain, test.toUnicode, "ToUnicode should equal the expected value");
     }
   };
 }
 
-const lines = fs.readFileSync(path.resolve(__dirname, "fixtures", "IdnaTest.txt"), { encoding: "utf8" })
+const lines = fs.readFileSync(path.resolve(__dirname, "fixtures", "IdnaTestV2.txt"), { encoding: "utf8" })
   .split("\n")
   .map(l => l.split("#")[0]);
 
 const testCases = [];
 
 for (const l of lines) {
-  const splitted = l.split(";").map(c => normalize(c.trim()));
+  const splitted = l.split(";");
   if (splitted.length !== 1) {
-    testCases.push(splitted);
+    let [
+      source,
+      toUnicode,
+      toUnicodeStatus,
+      toASCIIN,
+      toASCIINStatus,
+      toASCIIT,
+      toASCIITStatus
+    ] = splitted.map(c => normalize(c.trim()));
+
+    toUnicode = toUnicode || source;
+    // We don't care about X* error codes since they are just bugs in a
+    // previous version of the test suite.
+    if (toUnicodeStatus === "[]" || toUnicodeStatus === "[X4_2]") {
+      toUnicodeStatus = "";
+    }
+    toASCIIN = toASCIIN || toUnicode;
+    if (toASCIINStatus === "[]") {
+      toASCIINStatus = "";
+    }
+    toASCIIT = toASCIIT || toASCIIN;
+    if (toASCIITStatus === "[]") {
+      toASCIITStatus = "";
+    }
+
+    testCases.push({
+      source,
+      toUnicode,
+      toUnicodeStatus,
+      toASCIIN,
+      toASCIINStatus,
+      toASCIIT,
+      toASCIITStatus
+    });
   }
 }
 
-describe("IdnaTest.txt", () => {
+describe("IdnaTestV2.txt", () => {
   for (const test of testCases) {
-    it("Converting <" + test[1] + "> with type " + test[0], testConversion(test));
+    it("Converting <" + test.source + ">", testConversion(test));
   }
 });

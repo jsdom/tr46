@@ -10,10 +10,10 @@ const path = require("path");
 const request = require("request");
 const { unicodeVersion } = require("../package.json");
 
-const target = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/IdnaTest.txt"));
-request.get(`http://www.unicode.org/Public/idna/${unicodeVersion}/IdnaTest.txt`)
+const target = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/IdnaTestV2.txt"));
+request.get(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaTestV2.txt`)
   .pipe(target);
 
 const asciiTarget = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/toascii.json"));
-request.get("https://rawgit.com/w3c/web-platform-tests/785ec55ddc2dc2e5dfecac65832d68c82f72e50b/url/toascii.json")
+request.get("https://raw.githubusercontent.com/web-platform-tests/wpt/112ad5ca55d55f6da2ccc7468e6dcc91b4e5d223/url/resources/toascii.json")
   .pipe(asciiTarget);

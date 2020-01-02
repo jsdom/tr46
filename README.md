@@ -1,6 +1,6 @@
 # tr46.js
 
-> An implementation of the [Unicode TR46 specification](http://unicode.org/reports/tr46/).
+> An implementation of [Unicode Technical Standard #46: Unicode IDNA Compatibility Processing](https://unicode.org/reports/tr46/).
 
 
 ## Installation
@@ -33,6 +33,7 @@ Available options:
 * [`checkBidi`](#checkBidi)
 * [`checkHyphens`](#checkHyphens)
 * [`checkJoiners`](#checkJoiners)
+* [`processingOption`](#processingOption)
 * [`useSTD3ASCIIRules`](#useSTD3ASCIIRules)
 
 

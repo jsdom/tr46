@@ -244,7 +244,7 @@
     "no-var": "error",
     "object-shorthand": "error",
     "prefer-arrow-callback": "error",
-    "prefer-const": "error",
+    "prefer-const": ["error", { "destructuring": "all" }],
     "prefer-destructuring": "off", // Node v4 support
     "prefer-numeric-literals": "error",
     "prefer-rest-params": "off", // Node v4 support
