@@ -2,8 +2,10 @@
 const fs = require("fs");
 
 if (process.argv.length < 3) {
+  /* eslint-disable no-console */
   console.error("Usage: node generateUnicodeCodePoints.js filename [categories...]");
   console.error("Convert a derived Unicode Character Database file to a JSON map.");
+  /* eslint-enable no-console */
   return;
 }
 
