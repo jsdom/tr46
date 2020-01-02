@@ -1,8 +1,18 @@
 language: node_js
 node_js:
   - "6"
+  - "8"
+  - "10"
+  - "12"
   - "stable"
 
+install:
+  - yarn --frozen-lockfile
+
 script:
-  - npm run lint
-  - npm test
+  - yarn lint
+  - yarn test
+
+branches:
+  only:
+    - master
