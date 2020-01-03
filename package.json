@@ -17,10 +17,12 @@
     "pretest": "node scripts/getLatestTests.js",
     "prepublish": "node scripts/generateMappingTable.js && node scripts/generateRegexes.js"
   },
-  "repository": "https://github.com/jsdom/tr46.js",
+  "repository": "https://github.com/jsdom/tr46",
   "keywords": [
     "unicode",
     "tr46",
+    "uts46",
+    "punycode",
     "url",
     "whatwg"
   ],
