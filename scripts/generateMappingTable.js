@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const request = require("request");
 const { unicodeVersion } = require("../package.json");
+const { STATUS_MAPPING } = require("../statusMapping");
 
 request.get(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`, (err, res, body) => {
   if (err) {
@@ -25,7 +26,14 @@ request.get(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.
     const range = cells[0].split("..");
     const start = parseInt(range[0], 16);
     const end = parseInt(range[1] || range[0], 16);
-    cells[0] = [start, end];
+    cells[0] = end === start ? start : [start, end];
+
+    cells[1] = STATUS_MAPPING[cells[1]];
+
+    if (cells[1] === STATUS_MAPPING.valid) {
+      lines.push(cells.slice(0, 2));
+      return;
+    }
 
     if (cells[2] !== undefined) {
       // Parse replacement to int[] array
