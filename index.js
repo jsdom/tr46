@@ -22,18 +22,15 @@ function findStatus(val, { useSTD3ASCIIRules }) {
 
     if (min <= val && max >= val) {
       if (target[1] === STATUS_MAPPING.disallowed_STD3_valid || target[1] === STATUS_MAPPING.disallowed_STD3_mapped) {
-        let newStatus = "";
-
         if (useSTD3ASCIIRules) {
-          newStatus = STATUS_MAPPING.disallowed;
+          return [STATUS_MAPPING.disallowed, ...target.slice(2)];
         } else if (target[1] === STATUS_MAPPING.disallowed_STD3_valid) {
-          newStatus = STATUS_MAPPING.valid;
-        } else {
-          newStatus = STATUS_MAPPING.mapped;
+          return [STATUS_MAPPING.valid, ...target.slice(2)];
         }
 
-        return [newStatus, ...target.slice(2)];
+        return [STATUS_MAPPING.mapped, ...target.slice(2)];
       }
+
       return target.slice(1);
     } else if (min > val) {
       end = mid - 1;
