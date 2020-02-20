@@ -2,14 +2,13 @@
 
 const fs = require("fs");
 const path = require("path");
-const request = require("request");
+const fetch = require("node-fetch");
 const { unicodeVersion } = require("../package.json");
 const { STATUS_MAPPING } = require("../statusMapping");
 
-request.get(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`, (err, res, body) => {
-  if (err) {
-    throw err;
-  }
+async function main() {
+  const response = await fetch(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`);
+  const body = await response.text();
 
   const lines = [];
 
@@ -56,4 +55,6 @@ request.get(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.
   // binary search is way to quick to even notice that
 
   fs.writeFileSync(path.resolve(__dirname, "../lib/mappingTable.json"), JSON.stringify(lines));
-});
+}
+
+main();
