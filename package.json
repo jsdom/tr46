@@ -9,7 +9,8 @@
   "files": [
     "index.js",
     "lib/mappingTable.json",
-    "lib/regexes.js"
+    "lib/regexes.js",
+    "lib/statusMapping.js"
   ],
   "scripts": {
     "test": "mocha",
