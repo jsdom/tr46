@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const fetch = require("node-fetch");
 const { unicodeVersion } = require("../package.json");
-const { STATUS_MAPPING } = require("../statusMapping");
+const { STATUS_MAPPING } = require("../lib/statusMapping.js");
 
 async function main() {
   const response = await fetch(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`);

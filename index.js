@@ -3,7 +3,7 @@
 const punycode = require("punycode");
 const regexes = require("./lib/regexes.js");
 const mappingTable = require("./lib/mappingTable.json");
-const { STATUS_MAPPING } = require("./statusMapping");
+const { STATUS_MAPPING } = require("./lib/statusMapping.js");
 
 function containsNonASCII(str) {
   return /[^\x00-\x7F]/.test(str);
