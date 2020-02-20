@@ -21,13 +21,12 @@ function findStatus(val, { useSTD3ASCIIRules }) {
     const max = Array.isArray(target[0]) ? target[0][1] : target[0];
 
     if (min <= val && max >= val) {
-      if (target[1] === STATUS_MAPPING.disallowed_STD3_valid || target[1] === STATUS_MAPPING.disallowed_STD3_mapped) {
-        if (useSTD3ASCIIRules) {
-          return [STATUS_MAPPING.disallowed, ...target.slice(2)];
-        } else if (target[1] === STATUS_MAPPING.disallowed_STD3_valid) {
-          return [STATUS_MAPPING.valid, ...target.slice(2)];
-        }
-
+      if (useSTD3ASCIIRules &&
+          (target[1] === STATUS_MAPPING.disallowed_STD3_valid || target[1] === STATUS_MAPPING.disallowed_STD3_mapped)) {
+        return [STATUS_MAPPING.disallowed, ...target.slice(2)];
+      } else if (target[1] === STATUS_MAPPING.disallowed_STD3_valid) {
+        return [STATUS_MAPPING.valid, ...target.slice(2)];
+      } else if (target[1] === STATUS_MAPPING.disallowed_STD3_mapped) {
         return [STATUS_MAPPING.mapped, ...target.slice(2)];
       }
 
