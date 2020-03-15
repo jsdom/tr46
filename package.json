@@ -36,11 +36,11 @@
     "punycode": "^2.1.1"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "mocha": "^6.2.2",
+    "eslint": "^7.27.0",
+    "mocha": "^8.4.0",
     "node-fetch": "^2.6.0",
     "pump": "^3.0.0",
-    "regenerate": "^1.4.0",
+    "regenerate": "^1.4.2",
     "unicode-13.0.0": "^0.8.0"
   },
   "unicodeVersion": "13.0.0"
