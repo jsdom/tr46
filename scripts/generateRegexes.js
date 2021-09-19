@@ -50,6 +50,7 @@ const regexes = {
   combiningClassVirama: r`${regenerate(cp.CombiningClassVirama)}`,
 
   // A.1. ZWNJ, Rule 3
+  // eslint-disable-next-line prefer-template
   validZWNJ: r`${regenerate([...cp.JT.L, ...cp.JT.D])}${regenerate(cp.JT.T)}*` +
              "\\u200C" +
              r`${regenerate(cp.JT.T)}*${regenerate([...cp.JT.R, ...cp.JT.D])}`,

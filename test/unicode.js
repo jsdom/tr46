@@ -124,6 +124,6 @@ for (const l of lines) {
 
 describe("IdnaTestV2.txt", () => {
   for (const test of testCases) {
-    it("Converting <" + test.source + ">", testConversion(test));
+    it(`Converting <${test.source}>`, testConversion(test));
   }
 });
