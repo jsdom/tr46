@@ -10,7 +10,7 @@ const path = require("path");
 const { promisify } = require("util");
 // Replace this with stream/promises.pipeline when we require Node.js 15.x.
 const { pipeline } = require("stream");
-const fetch = require("node-fetch");
+const fetch = require("minipass-fetch");
 const { unicodeVersion } = require("../package.json");
 
 const pipelinePromise = promisify(pipeline);
