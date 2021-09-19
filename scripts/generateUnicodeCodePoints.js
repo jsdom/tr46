@@ -18,7 +18,7 @@ const lines = source.split("\n");
 const map = {};
 
 for (const line of lines) {
-  if (/^#/.test(line) || !/;\x20/.test(line)) {
+  if (/^#/u.test(line) || !/;\x20/u.test(line)) {
     continue;
   }
   const data = line.trim().split(";");
