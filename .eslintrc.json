@@ -3,5 +3,8 @@
   "extends": "@domenic",
   "env": {
     "node": true
+  },
+  "rules": {
+    "logical-assignment-operators": "off"
   }
 }
