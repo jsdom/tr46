@@ -1,5 +1,4 @@
 "use strict";
-/* eslint-disable no-process-env, no-process-exit */
 
 if (process.env.NO_UPDATE) {
   process.exit(0);
@@ -15,6 +14,11 @@ const { unicodeVersion } = require("../package.json");
 
 const pipelinePromise = promisify(pipeline);
 
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
+
 async function main() {
   await Promise.all([
     (async () => {
@@ -29,5 +33,3 @@ async function main() {
     })()
   ]);
 }
-
-main();
