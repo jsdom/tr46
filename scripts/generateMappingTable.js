@@ -6,6 +6,11 @@ const fetch = require("minipass-fetch");
 const { unicodeVersion } = require("../package.json");
 const { STATUS_MAPPING } = require("../lib/statusMapping.js");
 
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
+
 async function main() {
   const response = await fetch(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`);
   const body = await response.text();
@@ -56,5 +61,3 @@ async function main() {
 
   fs.writeFileSync(path.resolve(__dirname, "../lib/mappingTable.json"), JSON.stringify(lines));
 }
-
-main();

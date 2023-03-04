@@ -8,9 +8,7 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "lib/mappingTable.json",
-    "lib/regexes.js",
-    "lib/statusMapping.js"
+    "lib/"
   ],
   "scripts": {
     "test": "mocha",
