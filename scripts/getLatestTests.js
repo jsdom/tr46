@@ -24,7 +24,12 @@ async function main() {
     })(),
     (async () => {
       const asciiTarget = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/toascii.json"));
-      const response = await fetch("https://github.com/web-platform-tests/wpt/raw/112ad5ca55d55f6da2ccc7468e6dcc91b4e5d223/url/resources/toascii.json");
+      const response = await fetch("https://github.com/web-platform-tests/wpt/raw/7234ceaeb1505c42bef05a88a77da930653a4e31/url/resources/toascii.json");
+      await pipelinePromise(response.body, asciiTarget);
+    })(),
+    (async () => {
+      const asciiTarget = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/IdnaTestV2ToASCII.json"));
+      const response = await fetch("https://github.com/web-platform-tests/wpt/raw/7234ceaeb1505c42bef05a88a77da930653a4e31/url/resources/IdnaTestV2.json");
       await pipelinePromise(response.body, asciiTarget);
     })()
   ]);
