@@ -1,5 +1,4 @@
 "use strict";
-/* eslint-disable no-process-env, no-process-exit */
 
 if (process.env.NO_UPDATE) {
   process.exit(0);
@@ -18,6 +17,11 @@ const pipelinePromise = promisify(pipeline);
 // Update this by going to https://github.com/web-platform-tests/wpt/tree/master/url/resources and pressing "y" on the
 // keyboard.
 const wptSHA = "417a64d8351792b768efe089934edce3259f63d1";
+
+main().catch(e => {
+  console.error(e);
+  process.exit(1);
+});
 
 async function main() {
   await Promise.all([
@@ -38,5 +42,3 @@ async function main() {
     })()
   ]);
 }
-
-main();
