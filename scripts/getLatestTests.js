@@ -14,6 +14,10 @@ const { unicodeVersion } = require("../package.json");
 
 const pipelinePromise = promisify(pipeline);
 
+// Update this by going to https://github.com/web-platform-tests/wpt/tree/master/url/resources and pressing "y" on the
+// keyboard.
+const wptSHA = "417a64d8351792b768efe089934edce3259f63d1";
+
 main().catch(e => {
   console.error(e);
   process.exit(1);
@@ -28,7 +32,12 @@ async function main() {
     })(),
     (async () => {
       const asciiTarget = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/toascii.json"));
-      const response = await fetch("https://github.com/web-platform-tests/wpt/raw/112ad5ca55d55f6da2ccc7468e6dcc91b4e5d223/url/resources/toascii.json");
+      const response = await fetch(`https://github.com/web-platform-tests/wpt/raw/${wptSHA}/url/resources/toascii.json`);
+      await pipelinePromise(response.body, asciiTarget);
+    })(),
+    (async () => {
+      const asciiTarget = fs.createWriteStream(path.resolve(__dirname, "../test/fixtures/IdnaTestV2ToASCII.json"));
+      const response = await fetch(`https://github.com/web-platform-tests/wpt/raw/${wptSHA}/url/resources/IdnaTestV2.json`);
       await pipelinePromise(response.body, asciiTarget);
     })()
   ]);
