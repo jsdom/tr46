@@ -2,7 +2,6 @@
 
 const fs = require("fs");
 const path = require("path");
-const fetch = require("minipass-fetch");
 const { unicodeVersion } = require("../package.json");
 const { STATUS_MAPPING } = require("../lib/statusMapping.js");
 

@@ -3,7 +3,6 @@
 const fs = require("fs");
 const path = require("path");
 const regenerate = require("regenerate");
-const fetch = require("minipass-fetch");
 const { unicodeVersion } = require("../package.json");
 
 main().catch(e => {
