@@ -2,7 +2,7 @@
   "name": "tr46",
   "version": "4.1.1",
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   },
   "description": "An implementation of the Unicode UTS #46: Unicode IDNA Compatibility Processing",
   "main": "index.js",
