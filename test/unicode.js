@@ -1,6 +1,5 @@
-/* eslint-env node, mocha */
 "use strict";
-
+const { describe, test } = require("node:test");
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
@@ -54,24 +53,24 @@ function testConversionOption(source, expected, status, option) {
   }
 }
 
-function testConversion(test) {
-  return function () {
-    testConversionOption(test.source, test.toASCIIN, test.toASCIINStatus, "nontransitional");
-    testConversionOption(test.source, test.toASCIIT, test.toASCIITStatus, "transitional");
+function testConversion(testCase) {
+  return () => {
+    testConversionOption(testCase.source, testCase.toASCIIN, testCase.toASCIINStatus, "nontransitional");
+    testConversionOption(testCase.source, testCase.toASCIIT, testCase.toASCIITStatus, "transitional");
 
-    const res = tr46.toUnicode(test.source, {
+    const res = tr46.toUnicode(testCase.source, {
       checkHyphens: true,
       checkBidi: true,
       checkJoiners: true,
       useSTD3ASCIIRules: true,
       processingOption: "nontransitional"
     });
-    if (UNICODE_13_BROKEN_TO_UNICODE_TESTS.includes(test.source)) {
+    if (UNICODE_13_BROKEN_TO_UNICODE_TESTS.includes(testCase.source)) {
       assert.ok(!res.error);
-    } else if (test.toUnicodeStatus) { // Error code
+    } else if (testCase.toUnicodeStatus) { // Error code
       assert.ok(res.error, "ToUnicode should result in an error");
     } else {
-      assert.equal(res.domain, test.toUnicode, "ToUnicode should equal the expected value");
+      assert.equal(res.domain, testCase.toUnicode, "ToUnicode should equal the expected value");
     }
   };
 }
@@ -123,7 +122,7 @@ for (const l of lines) {
 }
 
 describe("IdnaTestV2.txt", () => {
-  for (const test of testCases) {
-    it(`Converting <${test.source}>`, testConversion(test));
+  for (const testCase of testCases) {
+    test(`Converting <${testCase.source}>`, testConversion(testCase));
   }
 });

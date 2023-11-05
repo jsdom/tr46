@@ -11,7 +11,7 @@
     "lib/"
   ],
   "scripts": {
-    "test": "mocha",
+    "test": "node --test",
     "lint": "eslint .",
     "pretest": "node scripts/getLatestTests.js",
     "prepublish": "node scripts/generateMappingTable.js && node scripts/generateRegexes.js"
@@ -37,7 +37,6 @@
     "@domenic/eslint-config": "^3.0.0",
     "@unicode/unicode-15.0.0": "^1.5.2",
     "eslint": "^8.53.0",
-    "mocha": "^10.2.0",
     "regenerate": "^1.4.2"
   },
   "unicodeVersion": "15.0.0"
