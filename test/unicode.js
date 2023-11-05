@@ -6,15 +6,6 @@ const path = require("path");
 
 const tr46 = require("../index.js");
 
-// UTS #46 version 13.0.0 includes the following broken tests.
-// They both include U+18C4E, which prior to 13.0.0 was treated as disallowed
-// but became valid in 13.0.0. However, the IdnaTestV2.txt file does not appear
-// to be updated for this change, and still considers them invalid.
-const UNICODE_13_BROKEN_TO_UNICODE_TESTS = [
-  [0x3A1B, 0x18C4E, 0x2E, 0x3002, 0x37, 0x0D01].map(cp => String.fromCodePoint(cp)).join(""),
-  "xn--mbm8237g..xn--7-7hf"
-];
-
 function normalize(inp) {
   let out = "";
 
@@ -33,13 +24,13 @@ function normalize(inp) {
   return out;
 }
 
-function testConversionOption(source, expected, status, option) {
+function testConversionOption(source, expected, status, transitionalProcessing) {
   const out = tr46.toASCII(source, {
     checkHyphens: true,
     checkBidi: true,
     checkJoiners: true,
     useSTD3ASCIIRules: true,
-    processingOption: option,
+    transitionalProcessing,
     verifyDNSLength: true
   });
 
@@ -55,19 +46,16 @@ function testConversionOption(source, expected, status, option) {
 
 function testConversion(testCase) {
   return () => {
-    testConversionOption(testCase.source, testCase.toASCIIN, testCase.toASCIINStatus, "nontransitional");
-    testConversionOption(testCase.source, testCase.toASCIIT, testCase.toASCIITStatus, "transitional");
+    testConversionOption(testCase.source, testCase.toASCIIN, testCase.toASCIINStatus, false);
+    testConversionOption(testCase.source, testCase.toASCIIT, testCase.toASCIITStatus, true);
 
     const res = tr46.toUnicode(testCase.source, {
       checkHyphens: true,
       checkBidi: true,
       checkJoiners: true,
-      useSTD3ASCIIRules: true,
-      processingOption: "nontransitional"
+      useSTD3ASCIIRules: true
     });
-    if (UNICODE_13_BROKEN_TO_UNICODE_TESTS.includes(testCase.source)) {
-      assert.ok(!res.error);
-    } else if (testCase.toUnicodeStatus) { // Error code
+    if (testCase.toUnicodeStatus) { // Error code
       assert.ok(res.error, "ToUnicode should result in an error");
     } else {
       assert.equal(res.domain, testCase.toUnicode, "ToUnicode should equal the expected value");
