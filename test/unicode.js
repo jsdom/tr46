@@ -94,17 +94,17 @@ for (const l of lines) {
       toASCIITStatus
     ] = splitted.map(c => normalize(c.trim()));
 
-    toUnicode = toUnicode || source;
+    toUnicode ||= source;
     // We don't care about X* error codes since they are just bugs in a
     // previous version of the test suite.
     if (toUnicodeStatus === "[]" || toUnicodeStatus === "[X4_2]") {
       toUnicodeStatus = "";
     }
-    toASCIIN = toASCIIN || toUnicode;
+    toASCIIN ||= toUnicode;
     if (toASCIINStatus === "[]") {
       toASCIINStatus = "";
     }
-    toASCIIT = toASCIIT || toASCIIN;
+    toASCIIT ||= toASCIIN;
     if (toASCIITStatus === "[]") {
       toASCIITStatus = "";
     }
