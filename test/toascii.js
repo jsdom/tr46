@@ -1,6 +1,5 @@
-/* eslint-env node, mocha */
 "use strict";
-
+const { describe, test } = require("node:test");
 const assert = require("assert");
 const tr46 = require("../index.js");
 
@@ -33,7 +32,7 @@ describe("ToASCII", () => {
       description += ` (${testCase.comment})`;
     }
 
-    specify(description, testToASCII(testCase));
+    test(description, testToASCII(testCase));
   }
 });
 
@@ -55,6 +54,6 @@ describe("ToASCII via IdnaTestV2.json in wpt", () => {
       description += ` (${testCase.comment})`;
     }
 
-    specify(description, testToASCII(testCase));
+    test(description, testToASCII(testCase));
   }
 });
