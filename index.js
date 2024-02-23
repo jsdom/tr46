@@ -291,23 +291,23 @@ function toASCII(domainName, {
     return l;
   });
 
+  if (result.error) {
+    return null;
+  }
+
   if (verifyDNSLength) {
     const total = labels.join(".").length;
     if (total > 253 || total === 0) {
-      result.error = true;
+      return null;
     }
 
     for (let i = 0; i < labels.length; ++i) {
       if (labels[i].length > 63 || labels[i].length === 0) {
-        result.error = true;
-        break;
+        return null;
       }
     }
   }
 
-  if (result.error) {
-    return null;
-  }
   return labels.join(".");
 }
 
