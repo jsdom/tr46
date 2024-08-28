@@ -1,6 +1,5 @@
 "use strict";
 
-const punycode = require("punycode/");
 const regexes = require("./lib/regexes.js");
 const mappingTable = require("./lib/mappingTable.json");
 const { STATUS_MAPPING } = require("./lib/statusMapping.js");
@@ -84,22 +83,16 @@ function validateLabel(label, {
   useSTD3ASCIIRules,
   isBidi
 }) {
-  // "must be satisfied for a non-empty label"
   if (label.length === 0) {
     return true;
   }
 
-  // "1. The label must be in Unicode Normalization Form NFC."
   if (label.normalize("NFC") !== label) {
     return false;
   }
 
   const codePoints = Array.from(label);
 
-  // "2. If CheckHyphens, the label must not contain a U+002D HYPHEN-MINUS character in both the
-  // third and fourth positions."
-  //
-  // "3. If CheckHyphens, the label must neither begin nor end with a U+002D HYPHEN-MINUS character."
   if (checkHyphens) {
     if ((codePoints[2] === "-" && codePoints[3] === "-") ||
         (label.startsWith("-") || label.endsWith("-"))) {
@@ -107,40 +100,25 @@ function validateLabel(label, {
     }
   }
 
-  // "4. If not CheckHyphens, the label must not begin with “xn--”."
-  // Disabled while we figure out https://github.com/whatwg/url/issues/803.
-  // if (!checkHyphens) {
-  //   if (label.startsWith("xn--")) {
-  //     return false;
-  //   }
-  // }
-
-  // "5. The label must not contain a U+002E ( . ) FULL STOP."
   if (label.includes(".")) {
     return false;
   }
 
-  // "6. The label must not begin with a combining mark, that is: General_Category=Mark."
   if (regexes.combiningMarks.test(codePoints[0])) {
     return false;
   }
 
-  // "7. Each code point in the label must only have certain Status values according to Section 5"
   for (const ch of codePoints) {
     const [status] = findStatus(ch.codePointAt(0), { useSTD3ASCIIRules });
     if (transitionalProcessing) {
-      // "For Transitional Processing (deprecated), each value must be valid."
       if (status !== STATUS_MAPPING.valid) {
         return false;
       }
     } else if (status !== STATUS_MAPPING.valid && status !== STATUS_MAPPING.deviation) {
-      // "For Nontransitional Processing, each value must be either valid or deviation."
       return false;
     }
   }
 
-  // "8. If CheckJoiners, the label must satisify the ContextJ rules"
-  // https://tools.ietf.org/html/rfc5892#appendix-A
   if (checkJoiners) {
     let last = 0;
     for (const [i, ch] of codePoints.entries()) {
@@ -150,7 +128,6 @@ function validateLabel(label, {
             continue;
           }
           if (ch === "\u200C") {
-            // TODO: make this more efficient
             const next = codePoints.indexOf("\u200C", i + 1);
             const test = next < 0 ? codePoints.slice(last) : codePoints.slice(last, next);
             if (regexes.validZWNJ.test(test.join(""))) {
@@ -164,12 +141,9 @@ function validateLabel(label, {
     }
   }
 
-  // "9. If CheckBidi, and if the domain name is a Bidi domain name, then the label must satisfy..."
-  // https://tools.ietf.org/html/rfc5893#section-2
   if (checkBidi && isBidi) {
     let rtl;
 
-    // 1
     if (regexes.bidiS1LTR.test(codePoints[0])) {
       rtl = false;
     } else if (regexes.bidiS1RTL.test(codePoints[0])) {
@@ -179,14 +153,13 @@ function validateLabel(label, {
     }
 
     if (rtl) {
-      // 2-4
       if (!regexes.bidiS2.test(label) ||
           !regexes.bidiS3.test(label) ||
           (regexes.bidiS4EN.test(label) && regexes.bidiS4AN.test(label))) {
         return false;
       }
     } else if (!regexes.bidiS5.test(label) ||
-               !regexes.bidiS6.test(label)) { // 5-6
+               !regexes.bidiS6.test(label)) {
       return false;
     }
   }
@@ -198,7 +171,7 @@ function isBidiDomain(labels) {
   const domain = labels.map(label => {
     if (label.startsWith("xn--")) {
       try {
-        return punycode.decode(label.substring(4));
+        return new TextDecoder().decode(new Uint8Array(label.substring(4).split("").map(ch => ch.charCodeAt(0))));
       } catch (err) {
         return "";
       }
@@ -209,17 +182,13 @@ function isBidiDomain(labels) {
 }
 
 function processing(domainName, options) {
-  // 1. Map.
   let string = mapChars(domainName, options);
 
-  // 2. Normalize.
   string = string.normalize("NFC");
 
-  // 3. Break.
   const labels = string.split(".");
   const isBidi = isBidiDomain(labels);
 
-  // 4. Convert/Validate.
   let error = false;
   for (const [i, origLabel] of labels.entries()) {
     let label = origLabel;
@@ -231,7 +200,7 @@ function processing(domainName, options) {
       }
 
       try {
-        label = punycode.decode(label.substring(4));
+        label = new TextDecoder().decode(new Uint8Array(label.substring(4).split("").map(ch => ch.charCodeAt(0))));
       } catch {
         if (!options.ignoreInvalidPunycode) {
           error = true;
@@ -242,7 +211,6 @@ function processing(domainName, options) {
       transitionalProcessingForThisLabel = false;
     }
 
-    // No need to validate if we already know there is an error.
     if (error) {
       continue;
     }
@@ -283,7 +251,7 @@ function toASCII(domainName, {
   labels = labels.map(l => {
     if (containsNonASCII(l)) {
       try {
-        return `xn--${punycode.encode(l)}`;
+        return `xn--${new TextEncoder().encode(l).reduce((acc, code) => acc + String.fromCharCode(code), "")}`;
       } catch (e) {
         result.error = true;
       }
