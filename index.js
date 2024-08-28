@@ -171,7 +171,7 @@ function isBidiDomain(labels) {
   const domain = labels.map(label => {
     if (label.startsWith("xn--")) {
       try {
-        return new TextDecoder().decode(new Uint8Array(label.substring(4).split('').map(ch => ch.charCodeAt(0))));
+        return new TextDecoder().decode(new Uint8Array(label.substring(4).split("").map(ch => ch.charCodeAt(0))));
       } catch (err) {
         return "";
       }
@@ -200,7 +200,7 @@ function processing(domainName, options) {
       }
 
       try {
-        label = new TextDecoder().decode(new Uint8Array(label.substring(4).split('').map(ch => ch.charCodeAt(0))));
+        label = new TextDecoder().decode(new Uint8Array(label.substring(4).split("").map(ch => ch.charCodeAt(0))));
       } catch {
         if (!options.ignoreInvalidPunycode) {
           error = true;
@@ -251,7 +251,7 @@ function toASCII(domainName, {
   labels = labels.map(l => {
     if (containsNonASCII(l)) {
       try {
-        return `xn--${new TextEncoder().encode(l).reduce((acc, code) => acc + String.fromCharCode(code), '')}`;
+        return `xn--${new TextEncoder().encode(l).reduce((acc, code) => acc + String.fromCharCode(code), "")}`;
       } catch (e) {
         result.error = true;
       }
