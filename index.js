@@ -1,6 +1,6 @@
 "use strict";
 
-const punycode = require("punycode");
+const punycode = require("punycode/");
 const regexes = require("./lib/regexes.js");
 const mappingTable = require("./lib/mappingTable.json");
 const { STATUS_MAPPING } = require("./lib/statusMapping.js");
