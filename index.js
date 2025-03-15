@@ -199,7 +199,7 @@ function isBidiDomain(labels) {
     if (label.startsWith("xn--")) {
       try {
         return punycode.decode(label.substring(4));
-      } catch (err) {
+      } catch {
         return "";
       }
     }
@@ -284,7 +284,7 @@ function toASCII(domainName, {
     if (containsNonASCII(l)) {
       try {
         return `xn--${punycode.encode(l)}`;
-      } catch (e) {
+      } catch {
         result.error = true;
       }
     }
