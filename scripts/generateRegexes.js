@@ -11,7 +11,6 @@ main().catch(e => {
 });
 
 async function main() {
-  /* eslint-disable global-require */
   const cp = {
     Mark: require(`@unicode/unicode-${unicodeVersion}/General_Category/Mark/code-points.js`),
     JT: await generateUnicodeCodePoints(`https://unicode.org/Public/${unicodeVersion}/ucd/extracted/DerivedJoiningType.txt`, ["L", "R", "D", "T"]),
@@ -30,7 +29,6 @@ async function main() {
     BN: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Boundary_Neutral/code-points.js`),
     ON: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Other_Neutral/code-points.js`)
   };
-  /* eslint-enable global-require */
 
   function r(strings, ...regs) {
     let output = "";
