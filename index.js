@@ -99,12 +99,11 @@ function validateLabel(label, {
   }
 
   // "4. If not CheckHyphens, the label must not begin with “xn--”."
-  // Disabled while we figure out https://github.com/whatwg/url/issues/803.
-  // if (!checkHyphens) {
-  //   if (label.startsWith("xn--")) {
-  //     return false;
-  //   }
-  // }
+  if (!checkHyphens) {
+    if (label.startsWith("xn--")) {
+      return false;
+    }
+  }
 
   // "5. The label must not contain a U+002E ( . ) FULL STOP."
   if (label.includes(".")) {

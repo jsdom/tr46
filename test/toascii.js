@@ -27,6 +27,11 @@ describe("ToASCII", () => {
       continue;
     }
 
+    if (testCase.urlStandardOnly) {
+      // This test isn't valid for just TR46 ToASCII; it relies on behavior from the URL Standard's "domain to ASCII".
+      continue;
+    }
+
     let description = testCase.input;
     if (testCase.comment) {
       description += ` (${testCase.comment})`;
