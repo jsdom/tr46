@@ -3,7 +3,6 @@ const { describe, test } = require("node:test");
 const assert = require("assert");
 const tr46 = require("../index.js");
 
-
 function testToASCIIWithSTD3ASCIIRules(testCase) {
   const result = tr46.toASCII(testCase.input, {
     checkBidi: false,
@@ -26,11 +25,13 @@ describe("ToASCII with useSTD3ASCIIRules = true123", () => {
 });
 
 describe("ToASCII with useSTD3ASCIIRules = true", () => {
+  const testCases = [];
+
+  // Add test cases for valid characters
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
   const digits = "0123456789";
   const hyphen = "-";
   const allowedChars = alphabet + digits + hyphen;
-  const testCases = [];
   for (const char of allowedChars) {
     testCases.push({
       input: char,
