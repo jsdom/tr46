@@ -15,15 +15,6 @@ function testToASCIIWithSTD3ASCIIRules(testCase) {
   assert.strictEqual(result, testCase.output);
 }
 
-describe("ToASCII with useSTD3ASCIIRules = true123", () => {
-  test("sample test", () => {
-    testToASCIIWithSTD3ASCIIRules({
-      input: "a",
-      output: "a"
-    });
-  });
-});
-
 describe("ToASCII with useSTD3ASCIIRules = true", () => {
   const testCases = [];
 
