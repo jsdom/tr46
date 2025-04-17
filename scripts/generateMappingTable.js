@@ -29,7 +29,7 @@ async function main() {
     const range = cells[0].split("..");
     const start = parseInt(range[0], 16);
     const end = parseInt(range[1] || range[0], 16);
-    cells[0] = end === start ? start : [start, end];
+    cells[0] = end === start ? start : [start, end - start];
 
     cells[1] = STATUS_MAPPING[cells[1]];
 
