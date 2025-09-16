@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@domenic/eslint-config": "^4.0.1",
-    "@unicode/unicode-16.0.0": "^1.6.5",
+    "@unicode/unicode-16.0.0": "^1.6.12",
     "eslint": "^9.22.0",
-    "globals": "^16.0.0",
+    "globals": "^16.4.0",
     "regenerate": "^1.4.2"
   },
   "unicodeVersion": "16.0.0"
