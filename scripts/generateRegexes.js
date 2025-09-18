@@ -131,7 +131,11 @@ async function main() {
 async function generateUnicodeCodePoints(url, interestedValues) {
   interestedValues = new Set(interestedValues);
 
-  const source = await (await fetch(url)).text();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ${url}: ${response.status}`);
+  }
+  const source = await response.text();
   const lines = source.split("\n");
 
   const map = {};

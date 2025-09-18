@@ -11,7 +11,10 @@ main().catch(e => {
 });
 
 async function main() {
-  const response = await fetch(`https://unicode.org/Public/idna/${unicodeVersion}/IdnaMappingTable.txt`);
+  const response = await fetch(`https://unicode.org/Public/${unicodeVersion}/idna/IdnaMappingTable.txt`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch IdnaMappingTable.txt: ${response.status}`);
+  }
   const body = await response.text();
 
   const lines = [];

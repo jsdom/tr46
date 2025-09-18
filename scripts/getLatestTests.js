@@ -10,7 +10,7 @@ const { unicodeVersion } = require("../package.json");
 
 // Update this by going to https://github.com/web-platform-tests/wpt/tree/master/url/resources and pressing "y" on the
 // keyboard.
-const wptSHA = "072413fba2fef3c16877673af78215174ca8f7c2";
+const wptSHA = "40fc257a28faf7c378f59185235685ea8684e8f4";
 
 main().catch(e => {
   console.error(e);
