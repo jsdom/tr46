@@ -16,7 +16,10 @@
     "pretest": "node scripts/getLatestTests.js",
     "prepublish": "node scripts/generateMappingTable.js && node scripts/generateRegexes.js"
   },
-  "repository": "https://github.com/jsdom/tr46",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsdom/tr46.git"
+  },
   "keywords": [
     "unicode",
     "tr46",
@@ -36,8 +39,8 @@
   "devDependencies": {
     "@domenic/eslint-config": "^4.0.1",
     "@unicode/unicode-17.0.0": "^1.6.12",
-    "eslint": "^9.22.0",
-    "globals": "^16.0.0",
+    "eslint": "^9.35.0",
+    "globals": "^16.4.0",
     "regenerate": "^1.4.2"
   },
   "unicodeVersion": "17.0.0"
