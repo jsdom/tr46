@@ -18,7 +18,7 @@ function findStatus(val) {
 
     const target = mappingTable[mid];
     const min = Array.isArray(target[0]) ? target[0][0] : target[0];
-    const max = Array.isArray(target[0]) ? target[0][1] : target[0];
+    const max = Array.isArray(target[0]) ? min + target[0][1] : target[0];
 
     if (min <= val && max >= val) {
       return target.slice(1);
