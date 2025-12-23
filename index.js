@@ -2,26 +2,71 @@
 
 const punycode = require("punycode/");
 const regexes = require("./lib/regexes.js");
-const mappingTable = require("./lib/mappingTable.json");
+const tablesRaw = require("./lib/mappingTable.json");
 const { STATUS_MAPPING } = require("./lib/statusMapping.js");
 
 function containsNonASCII(str) {
   return /[^\x00-\x7F]/u.test(str);
 }
 
+let rangesTable,
+  mappingTable;
+
+function unpackMappingTable() {
+  if (mappingTable) {
+    return;
+  }
+
+  // Destroying the originals, for mem
+
+  rangesTable = [];
+  let current = 0;
+  const [rangesRaw, statusesRaw, mappingRaw] = tablesRaw;
+  while (rangesRaw.length > 0) {
+    if (rangesRaw[0] < 0) {
+      const repeats = -rangesRaw.shift(); // Treat as this many repeats of [1, 0]
+      for (let i = 0; i < repeats; i++) {
+        rangesTable.push([++current, 0]);
+      }
+    } else {
+      const row = rangesRaw.splice(0, 2);
+      row[0] = current += row[0];
+      rangesTable.push(row);
+    }
+  }
+
+  mappingTable = [];
+  for (const status of statusesRaw) {
+    if (status < 0) {
+      // Threat this as many repeats of STATUS_MAPPING.mapped
+      for (let i = 0; i < -status; i++) {
+        mappingTable.push([STATUS_MAPPING.mapped, mappingRaw.shift()]);
+      }
+    } else if (status === STATUS_MAPPING.mapped || status === STATUS_MAPPING.deviation) {
+      mappingTable.push([status, mappingRaw.shift()]);
+    } else {
+      mappingTable.push([status]);
+    }
+  }
+
+  statusesRaw.length = 0; // Destroy for mem
+}
+
 function findStatus(val) {
+  unpackMappingTable();
+
   let start = 0;
-  let end = mappingTable.length - 1;
+  let end = rangesTable.length - 1;
 
   while (start <= end) {
     const mid = Math.floor((start + end) / 2);
 
-    const target = mappingTable[mid];
-    const min = Array.isArray(target[0]) ? target[0][0] : target[0];
-    const max = Array.isArray(target[0]) ? target[0][1] : target[0];
+    const target = rangesTable[mid];
+    const min = target[0];
+    const max = min + target[1];
 
     if (min <= val && max >= val) {
-      return target.slice(1);
+      return mappingTable[mid];
     } else if (min > val) {
       end = mid - 1;
     } else {
@@ -36,9 +81,9 @@ function mapChars(domainName, { transitionalProcessing }) {
   let processed = "";
 
   for (const ch of domainName) {
-    const [status, mapping] = findStatus(ch.codePointAt(0));
+    const row = findStatus(ch.codePointAt(0)); // [status, mapping]
 
-    switch (status) {
+    switch (row[0]) {
       case STATUS_MAPPING.disallowed:
         processed += ch;
         break;
@@ -48,12 +93,12 @@ function mapChars(domainName, { transitionalProcessing }) {
         if (transitionalProcessing && ch === "ẞ") {
           processed += "ss";
         } else {
-          processed += mapping;
+          processed += row[1];
         }
         break;
       case STATUS_MAPPING.deviation:
         if (transitionalProcessing) {
-          processed += mapping;
+          processed += row[1];
         } else {
           processed += ch;
         }

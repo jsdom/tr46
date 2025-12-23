@@ -17,7 +17,9 @@ async function main() {
   }
   const body = await response.text();
 
-  const lines = [];
+  const ranges = [];
+  const statuses = [];
+  const mappings = [];
 
   body.split("\n").forEach(l => {
     l = l.split("#")[0]; // Remove comments
@@ -32,18 +34,19 @@ async function main() {
     const range = cells[0].split("..");
     const start = parseInt(range[0], 16);
     const end = parseInt(range[1] || range[0], 16);
-    cells[0] = end === start ? start : [start, end];
+    cells[0] = [start, end - start];
+    ranges.push(cells.shift());
 
-    cells[1] = STATUS_MAPPING[cells[1]];
+    const status = STATUS_MAPPING[cells.shift()];
+    statuses.push(status);
 
-    if (cells[1] === STATUS_MAPPING.valid) {
-      lines.push(cells.slice(0, 2));
+    if (status !== STATUS_MAPPING.mapped && status !== STATUS_MAPPING.deviation) {
       return;
     }
 
-    if (cells[2] !== undefined) {
+    if (cells[0] !== undefined) {
       // Parse replacement to int[] array
-      let replacement = cells[2].split(" ");
+      let replacement = cells[0].split(" ");
       if (replacement[0] === "") { // Empty array
         replacement = [];
       }
@@ -52,14 +55,65 @@ async function main() {
         return parseInt(r, 16);
       });
 
-      cells[2] = String.fromCodePoint(...replacement);
+      mappings.push(String.fromCodePoint(...replacement));
+    } else {
+      throw new Error("Unexpected");
     }
-
-    lines.push(cells);
   });
 
   // We could drop valid chars, but those are only ~1000 ranges and
   // binary search is way to quick to even notice that
 
-  fs.writeFileSync(path.resolve(__dirname, "../lib/mappingTable.json"), JSON.stringify(lines));
+  // Delta-code starts
+  let last = 0;
+  for (const range of ranges) {
+    range[0] -= last;
+    last += range[0];
+  }
+
+  // Condense repeats of N consecutive [1, 0] in ranges to -N, flatten the rest
+  const rangesCondensed = [];
+  let repeats = 0;
+  for (const row of ranges) {
+    if (row[0] === 1 && row[1] === 0) {
+      repeats++;
+      continue;
+    }
+
+    if (repeats > 0) {
+      rangesCondensed.push(-repeats);
+      repeats = 0;
+    }
+
+    rangesCondensed.push(...row);
+  }
+
+  if (repeats > 0) {
+    rangesCondensed.push(-repeats);
+    repeats = 0;
+  }
+
+  // Condense repeats of N consecutive STATUS_MAPPING.mapped to -N
+  const statusesCondensed = [];
+  for (const status of statuses) {
+    if (status === STATUS_MAPPING.mapped) {
+      repeats++;
+      continue;
+    }
+
+    if (repeats > 0) {
+      statusesCondensed.push(repeats === 1 ? STATUS_MAPPING.mapped : -repeats);
+      repeats = 0;
+    }
+
+    statusesCondensed.push(status);
+  }
+
+  if (repeats > 0) {
+    statusesCondensed.push(repeats === 1 ? STATUS_MAPPING.mapped : -repeats);
+    repeats = 0;
+  }
+
+  const tablesRaw = [rangesCondensed, statusesCondensed, mappings];
+  fs.writeFileSync(path.resolve(__dirname, "../lib/mappingTable.json"), JSON.stringify(tablesRaw));
 }
