@@ -12,22 +12,22 @@ main().catch(e => {
 
 async function main() {
   const cp = {
-    Mark: require(`@unicode/unicode-${unicodeVersion}/General_Category/Mark/code-points.js`),
+    Mark: (await import(`@unicode/unicode-${unicodeVersion}/General_Category/Mark/code-points.mjs`)).default,
     JT: await generateUnicodeCodePoints(`https://unicode.org/Public/${unicodeVersion}/ucd/extracted/DerivedJoiningType.txt`, ["L", "R", "D", "T"]),
     CombiningClassVirama: (await generateUnicodeCodePoints(`https://unicode.org/Public/${unicodeVersion}/ucd/extracted/DerivedCombiningClass.txt`, ["9"]))["9"],
 
     // https://tools.ietf.org/html/rfc5893#section-1.4
-    L: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Left_To_Right/code-points.js`),
-    R: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Right_To_Left/code-points.js`),
-    AL: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Arabic_Letter/code-points.js`),
-    EN: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/European_Number/code-points.js`),
-    ES: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/European_Separator/code-points.js`),
-    ET: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/European_Terminator/code-points.js`),
-    AN: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Arabic_Number/code-points.js`),
-    CS: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Common_Separator/code-points.js`),
-    NSM: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Nonspacing_Mark/code-points.js`),
-    BN: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Boundary_Neutral/code-points.js`),
-    ON: require(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Other_Neutral/code-points.js`)
+    L: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Left_To_Right/code-points.mjs`)).default,
+    R: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Right_To_Left/code-points.mjs`)).default,
+    AL: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Arabic_Letter/code-points.mjs`)).default,
+    EN: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/European_Number/code-points.mjs`)).default,
+    ES: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/European_Separator/code-points.mjs`)).default,
+    ET: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/European_Terminator/code-points.mjs`)).default,
+    AN: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Arabic_Number/code-points.mjs`)).default,
+    CS: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Common_Separator/code-points.mjs`)).default,
+    NSM: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Nonspacing_Mark/code-points.mjs`)).default,
+    BN: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Boundary_Neutral/code-points.mjs`)).default,
+    ON: (await import(`@unicode/unicode-${unicodeVersion}/Bidi_Class/Other_Neutral/code-points.mjs`)).default
   };
 
   function r(strings, ...regs) {
