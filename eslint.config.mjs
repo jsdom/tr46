@@ -16,9 +16,9 @@ export default [
   },
   ...domenicConfig,
   {
-    files: ["scripts/**.js"],
-    rules: {
-      "no-console": "off"
+    files: ["**/*.mjs"],
+    languageOptions: {
+      globals: globals.node
     }
   }
 ];
