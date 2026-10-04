@@ -32,6 +32,11 @@ describe("ToASCII", () => {
       continue;
     }
 
+    // The URL Standard bypasses IDNA processing for ASCII domains.
+    if (/^[\x00-\x7F]*$/u.test(testCase.input)) {
+      continue;
+    }
+
     let description = testCase.input;
     if (testCase.comment) {
       description += ` (${testCase.comment})`;
@@ -51,6 +56,11 @@ describe("ToASCII via IdnaTestV2.json in wpt", () => {
     if (testCase.input.includes("?")) {
       // ToASCII will not fail on these. But, the URL Standard will. IdnaTestV2.json is mostly focused on the URL
       // Standard, so it expects failures. We should skip them.
+      continue;
+    }
+
+    // The URL Standard bypasses IDNA processing for ASCII domains.
+    if (/^[\x00-\x7F]*$/u.test(testCase.input)) {
       continue;
     }
 
