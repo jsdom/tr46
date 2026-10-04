@@ -13,8 +13,8 @@
   "scripts": {
     "test": "node --test",
     "lint": "eslint",
-    "pretest": "node scripts/getLatestTests.js",
-    "prepublish": "node scripts/generateMappingTable.js && node scripts/generateRegexes.js"
+    "pretest": "node scripts/getLatestTests.mjs",
+    "prepublish": "node scripts/generateMappingTable.mjs && node scripts/generateRegexes.mjs"
   },
   "repository": {
     "type": "git",
