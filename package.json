@@ -1,48 +1,53 @@
 {
   "name": "tr46",
   "version": "7.0.0",
-  "engines": {
-    "node": "^22.14.0 || >=24.0.0"
-  },
   "description": "An implementation of the Unicode UTS #46: Unicode IDNA Compatibility Processing",
-  "main": "index.js",
-  "files": [
-    "index.js",
-    "lib/"
-  ],
-  "scripts": {
-    "test": "node --test",
-    "lint": "eslint",
-    "pretest": "node scripts/getLatestTests.mjs",
-    "prepublish": "node scripts/generateMappingTable.mjs && node scripts/generateRegexes.mjs"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jsdom/tr46.git"
-  },
   "keywords": [
-    "unicode",
-    "tr46",
-    "uts46",
     "punycode",
+    "tr46",
+    "unicode",
     "url",
+    "uts46",
     "whatwg"
   ],
+  "license": "MIT",
   "author": "Sebastian Mayr <npm@smayr.name>",
   "contributors": [
     "Timothy Gu <timothygu99@gmail.com>"
   ],
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsdom/tr46.git"
+  },
+  "files": [
+    "index.js",
+    "lib/"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test",
+    "check": "npm run lint && npm run fmt:check",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "pretest": "node scripts/getLatestTests.mjs",
+    "prepublish": "node scripts/generateMappingTable.mjs && node scripts/generateRegexes.mjs"
+  },
   "dependencies": {
     "punycode": "^2.3.1"
   },
   "devDependencies": {
-    "@domenic/eslint-config": "^5.1.0",
+    "@domenic/eslint-config": "^6.0.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@unicode/unicode-18.0.0": "^2.0.7",
-    "eslint": "^10.12.0",
+    "eslint": "^10.13.0",
     "globals": "^17.13.0",
+    "oxfmt": "0.75.0",
     "regenerate": "^1.4.2"
+  },
+  "engines": {
+    "node": "^22.14.0 || >=24.0.0"
   },
   "unicodeVersion": "18.0.0"
 }

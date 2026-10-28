@@ -1,9 +1,14 @@
 import { readFile, writeFile } from "node:fs/promises";
+
 import { STATUS_MAPPING } from "../lib/statusMapping.js";
 
-const { unicodeVersion } = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+const { unicodeVersion } = JSON.parse(
+  await readFile(new URL("../package.json", import.meta.url), "utf8"),
+);
 
-const response = await fetch(`https://unicode.org/Public/${unicodeVersion}/idna/IdnaMappingTable.txt`);
+const response = await fetch(
+  `https://unicode.org/Public/${unicodeVersion}/idna/IdnaMappingTable.txt`,
+);
 if (!response.ok) {
   throw new Error(`Failed to fetch IdnaMappingTable.txt: ${response.status}`);
 }
@@ -11,9 +16,9 @@ const body = await response.text();
 
 const lines = [];
 
-body.split("\n").forEach(l => {
+body.split("\n").forEach((l) => {
   l = l.split("#")[0]; // Remove comments
-  const cells = l.split(";").map(c => {
+  const cells = l.split(";").map((c) => {
     return c.trim();
   });
   if (cells.length === 1) {
@@ -36,11 +41,12 @@ body.split("\n").forEach(l => {
   if (cells[2] !== undefined) {
     // Parse replacement to int[] array
     let replacement = cells[2].split(" ");
-    if (replacement[0] === "") { // Empty array
+    if (replacement[0] === "") {
+      // Empty array
       replacement = [];
     }
 
-    replacement = replacement.map(r => {
+    replacement = replacement.map((r) => {
       return parseInt(r, 16);
     });
 

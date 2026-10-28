@@ -31,10 +31,11 @@ function testConversionOption(source, expected, status, transitionalProcessing) 
     checkJoiners: true,
     useSTD3ASCIIRules: true,
     transitionalProcessing,
-    verifyDNSLength: true
+    verifyDNSLength: true,
   });
 
-  if (status) { // Error code
+  if (status) {
+    // Error code
     assert.equal(out, null, "toASCII should result in an error");
   } else if (out !== null) {
     assert.equal(out, expected, "toASCII should equal the expected value");
@@ -53,9 +54,10 @@ function testConversion(testCase) {
       checkHyphens: true,
       checkBidi: true,
       checkJoiners: true,
-      useSTD3ASCIIRules: true
+      useSTD3ASCIIRules: true,
     });
-    if (testCase.toUnicodeStatus) { // Error code
+    if (testCase.toUnicodeStatus) {
+      // Error code
       assert.ok(res.error, "ToUnicode should result in an error");
     } else {
       assert.equal(res.domain, testCase.toUnicode, "ToUnicode should equal the expected value");
@@ -63,24 +65,18 @@ function testConversion(testCase) {
   };
 }
 
-const lines = fs.readFileSync(path.resolve(__dirname, "fixtures", "IdnaTestV2.txt"), { encoding: "utf8" })
+const lines = fs
+  .readFileSync(path.resolve(__dirname, "fixtures", "IdnaTestV2.txt"), { encoding: "utf8" })
   .split("\n")
-  .map(l => l.split("#")[0]);
+  .map((l) => l.split("#")[0]);
 
 const testCases = [];
 
 for (const l of lines) {
   const splitted = l.split(";");
   if (splitted.length !== 1) {
-    let [
-      source,
-      toUnicode,
-      toUnicodeStatus,
-      toASCIIN,
-      toASCIINStatus,
-      toASCIIT,
-      toASCIITStatus
-    ] = splitted.map(c => normalize(c.trim()));
+    let [source, toUnicode, toUnicodeStatus, toASCIIN, toASCIINStatus, toASCIIT, toASCIITStatus] =
+      splitted.map((c) => normalize(c.trim()));
 
     toUnicode ||= source;
     // We don't care about X* error codes since they are just bugs in a
@@ -104,7 +100,7 @@ for (const l of lines) {
       toASCIIN,
       toASCIINStatus,
       toASCIIT,
-      toASCIITStatus
+      toASCIITStatus,
     });
   }
 }

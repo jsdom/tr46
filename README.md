@@ -10,13 +10,13 @@ Converts a string of Unicode symbols to a case-folded Punycode string of ASCII s
 
 Available options:
 
-* [`checkBidi`](#checkbidi)
-* [`checkHyphens`](#checkhyphens)
-* [`checkJoiners`](#checkjoiners)
-* [`ignoreInvalidPunycode`](#ignoreinvalidpunycode)
-* [`transitionalProcessing`](#transitionalprocessing)
-* [`useSTD3ASCIIRules`](#usestd3asciirules)
-* [`verifyDNSLength`](#verifydnslength)
+- [`checkBidi`](#checkbidi)
+- [`checkHyphens`](#checkhyphens)
+- [`checkJoiners`](#checkjoiners)
+- [`ignoreInvalidPunycode`](#ignoreinvalidpunycode)
+- [`transitionalProcessing`](#transitionalprocessing)
+- [`useSTD3ASCIIRules`](#usestd3asciirules)
+- [`verifyDNSLength`](#verifydnslength)
 
 ### `toUnicode(domainName[, options])`
 
@@ -24,12 +24,12 @@ Converts a case-folded Punycode string of ASCII symbols to a string of Unicode s
 
 Available options:
 
-* [`checkBidi`](#checkbidi)
-* [`checkHyphens`](#checkhyphens)
-* [`checkJoiners`](#checkjoiners)
-* [`ignoreInvalidPunycode`](#ignoreinvalidpunycode)
-* [`transitionalProcessing`](#transitionalprocessing)
-* [`useSTD3ASCIIRules`](#usestd3asciirules)
+- [`checkBidi`](#checkbidi)
+- [`checkHyphens`](#checkhyphens)
+- [`checkJoiners`](#checkjoiners)
+- [`ignoreInvalidPunycode`](#ignoreinvalidpunycode)
+- [`transitionalProcessing`](#transitionalprocessing)
+- [`useSTD3ASCIIRules`](#usestd3asciirules)
 
 ## Options
 
