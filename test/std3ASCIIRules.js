@@ -9,7 +9,7 @@ function testToASCIIWithSTD3ASCIIRules(testCase) {
     checkHyphens: false,
     checkJoiners: false,
     useSTD3ASCIIRules: true,
-    verifyDNSLength: false
+    verifyDNSLength: false,
   });
 
   assert.strictEqual(result, testCase.output);
@@ -27,7 +27,7 @@ describe("ToASCII with useSTD3ASCIIRules = true", () => {
     testCases.push({
       input: char,
       output: char,
-      comment: "STD3 range"
+      comment: "STD3 range",
     });
   }
 
@@ -51,7 +51,7 @@ describe("ToASCII with useSTD3ASCIIRules = true", () => {
     testCases.push({
       input: char,
       output: null,
-      comment: "Outside of STD3 range"
+      comment: "Outside of STD3 range",
     });
   }
 
@@ -59,29 +59,29 @@ describe("ToASCII with useSTD3ASCIIRules = true", () => {
   testCases.push({
     input: "é",
     output: "xn--9ca",
-    comment: "Unicode"
+    comment: "Unicode",
   });
 
   // Additional test cases, with mixed valid and invalid characters
   testCases.push({
     input: "inv@alid",
     output: null,
-    comment: "Invalid label"
+    comment: "Invalid label",
   });
   testCases.push({
     input: "valid",
     output: "valid",
-    comment: "Valid label"
+    comment: "Valid label",
   });
   testCases.push({
     input: "unicodé",
     output: "xn--unicod-gva",
-    comment: "Valid uncode label"
+    comment: "Valid uncode label",
   });
   testCases.push({
     input: "uni!codé",
     output: null,
-    comment: "Invalid uncode label"
+    comment: "Invalid uncode label",
   });
 
   for (const testCase of testCases) {
@@ -96,4 +96,3 @@ describe("ToASCII with useSTD3ASCIIRules = true", () => {
     });
   }
 });
-

@@ -67,14 +67,10 @@ function mapChars(domainName, { transitionalProcessing }) {
   return processed;
 }
 
-function validateLabel(label, {
-  checkHyphens,
-  checkBidi,
-  checkJoiners,
-  transitionalProcessing,
-  useSTD3ASCIIRules,
-  isBidi
-}) {
+function validateLabel(
+  label,
+  { checkHyphens, checkBidi, checkJoiners, transitionalProcessing, useSTD3ASCIIRules, isBidi },
+) {
   // "must be satisfied for a non-empty label"
   if (label.length === 0) {
     return true;
@@ -92,8 +88,11 @@ function validateLabel(label, {
   //
   // "3. If CheckHyphens, the label must neither begin nor end with a U+002D HYPHEN-MINUS character."
   if (checkHyphens) {
-    if ((codePoints[2] === "-" && codePoints[3] === "-") ||
-        (label.startsWith("-") || label.endsWith("-"))) {
+    if (
+      (codePoints[2] === "-" && codePoints[3] === "-") ||
+      label.startsWith("-") ||
+      label.endsWith("-")
+    ) {
       return false;
     }
   }
@@ -131,7 +130,7 @@ function validateLabel(label, {
     // "In addition, if UseSTD3ASCIIRules=true and the code point is an ASCII code point (U+0000..U+007F), then it must
     // be a lowercase letter (a-z), a digit (0-9), or a hyphen-minus (U+002D). (Note: This excludes uppercase ASCII
     // A-Z which are mapped in UTS #46 and disallowed in IDNA2008.)"
-    if (useSTD3ASCIIRules && codePoint <= 0x7F) {
+    if (useSTD3ASCIIRules && codePoint <= 0x7f) {
       if (!/^(?:[a-z]|[0-9]|-)$/u.test(ch)) {
         return false;
       }
@@ -179,13 +178,15 @@ function validateLabel(label, {
 
     if (rtl) {
       // 2-4
-      if (!regexes.bidiS2.test(label) ||
-          !regexes.bidiS3.test(label) ||
-          (regexes.bidiS4EN.test(label) && regexes.bidiS4AN.test(label))) {
+      if (
+        !regexes.bidiS2.test(label) ||
+        !regexes.bidiS3.test(label) ||
+        (regexes.bidiS4EN.test(label) && regexes.bidiS4AN.test(label))
+      ) {
         return false;
       }
-    } else if (!regexes.bidiS5.test(label) ||
-               !regexes.bidiS6.test(label)) { // 5-6
+    } else if (!regexes.bidiS5.test(label) || !regexes.bidiS6.test(label)) {
+      // 5-6
       return false;
     }
   }
@@ -194,16 +195,18 @@ function validateLabel(label, {
 }
 
 function isBidiDomain(labels) {
-  const domain = labels.map(label => {
-    if (label.startsWith("xn--")) {
-      try {
-        return punycode.decode(label.substring(4));
-      } catch {
-        return "";
+  const domain = labels
+    .map((label) => {
+      if (label.startsWith("xn--")) {
+        try {
+          return punycode.decode(label.substring(4));
+        } catch {
+          return "";
+        }
       }
-    }
-    return label;
-  }).join(".");
+      return label;
+    })
+    .join(".");
   return regexes.bidiDomain.test(domain);
 }
 
@@ -253,7 +256,7 @@ function processing(domainName, options) {
     const validation = validateLabel(label, {
       ...options,
       transitionalProcessing: transitionalProcessingForThisLabel,
-      isBidi
+      isBidi,
     });
     if (!validation) {
       error = true;
@@ -262,29 +265,32 @@ function processing(domainName, options) {
 
   return {
     string: labels.join("."),
-    error
+    error,
   };
 }
 
-function toASCII(domainName, {
-  checkHyphens = false,
-  checkBidi = false,
-  checkJoiners = false,
-  useSTD3ASCIIRules = false,
-  verifyDNSLength = false,
-  transitionalProcessing = false,
-  ignoreInvalidPunycode = false
-} = {}) {
+function toASCII(
+  domainName,
+  {
+    checkHyphens = false,
+    checkBidi = false,
+    checkJoiners = false,
+    useSTD3ASCIIRules = false,
+    verifyDNSLength = false,
+    transitionalProcessing = false,
+    ignoreInvalidPunycode = false,
+  } = {},
+) {
   const result = processing(domainName, {
     checkHyphens,
     checkBidi,
     checkJoiners,
     useSTD3ASCIIRules,
     transitionalProcessing,
-    ignoreInvalidPunycode
+    ignoreInvalidPunycode,
   });
   let labels = result.string.split(".");
-  labels = labels.map(l => {
+  labels = labels.map((l) => {
     if (containsNonASCII(l)) {
       try {
         return `xn--${punycode.encode(l)}`;
@@ -315,30 +321,33 @@ function toASCII(domainName, {
   return labels.join(".");
 }
 
-function toUnicode(domainName, {
-  checkHyphens = false,
-  checkBidi = false,
-  checkJoiners = false,
-  useSTD3ASCIIRules = false,
-  transitionalProcessing = false,
-  ignoreInvalidPunycode = false
-} = {}) {
+function toUnicode(
+  domainName,
+  {
+    checkHyphens = false,
+    checkBidi = false,
+    checkJoiners = false,
+    useSTD3ASCIIRules = false,
+    transitionalProcessing = false,
+    ignoreInvalidPunycode = false,
+  } = {},
+) {
   const result = processing(domainName, {
     checkHyphens,
     checkBidi,
     checkJoiners,
     useSTD3ASCIIRules,
     transitionalProcessing,
-    ignoreInvalidPunycode
+    ignoreInvalidPunycode,
   });
 
   return {
     domain: result.string,
-    error: result.error
+    error: result.error,
   };
 }
 
 module.exports = {
   toASCII,
-  toUnicode
+  toUnicode,
 };

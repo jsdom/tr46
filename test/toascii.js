@@ -13,7 +13,7 @@ function testToASCII(testCase) {
       checkHyphens: false,
       checkJoiners: true,
       useSTD3ASCIIRules: false,
-      verifyDNSLength: false
+      verifyDNSLength: false,
     });
 
     assert.strictEqual(result, testCase.output);
