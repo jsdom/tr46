@@ -1,6 +1,6 @@
 "use strict";
 const { describe, test } = require("node:test");
-const assert = require("assert");
+const assert = require("node:assert/strict");
 const tr46 = require("../index.js");
 
 const toASCIITestCases = require("./fixtures/toascii.json");
@@ -16,7 +16,7 @@ function testToASCII(testCase) {
       verifyDNSLength: false,
     });
 
-    assert.strictEqual(result, testCase.output);
+    assert.equal(result, testCase.output);
   };
 }
 
