@@ -1,9 +1,10 @@
 import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 import { STATUS_MAPPING } from "../lib/statusMapping.js";
 
 const { unicodeVersion } = JSON.parse(
-  await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  await readFile(path.resolve(import.meta.dirname, "../package.json"), "utf8"),
 );
 
 const response = await fetch(
@@ -59,4 +60,7 @@ body.split("\n").forEach((l) => {
 // We could drop valid chars, but those are only ~1000 ranges and
 // binary search is way to quick to even notice that
 
-await writeFile(new URL("../lib/mappingTable.json", import.meta.url), JSON.stringify(lines));
+await writeFile(
+  path.resolve(import.meta.dirname, "../lib/mappingTable.json"),
+  JSON.stringify(lines),
+);

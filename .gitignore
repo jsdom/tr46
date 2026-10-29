@@ -1,11 +1,6 @@
-# ide specific
-.settings/
-
-# node specific
 node_modules/
-npm-debug.log
+npm-debug.log*
 
-# project specific
-lib/mappingTable.json
-lib/regexes.js
-test/fixtures/
+/lib/mappingTable.json
+/lib/regexes.js
+/test/fixtures/

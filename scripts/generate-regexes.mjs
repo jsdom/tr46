@@ -1,9 +1,10 @@
 import { readFile, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 import regenerate from "regenerate";
 
 const { unicodeVersion } = JSON.parse(
-  await readFile(new URL("../package.json", import.meta.url), "utf8"),
+  await readFile(path.resolve(import.meta.dirname, "../package.json"), "utf8"),
 );
 
 const cp = {
@@ -138,7 +139,7 @@ out += `\nmodule.exports = {
     ${Object.keys(regexes).join(",\n  ")}
   };\n`;
 
-await writeFile(new URL("../lib/regexes.js", import.meta.url), out);
+await writeFile(path.resolve(import.meta.dirname, "../lib/regexes.js"), out);
 
 async function generateUnicodeCodePoints(url, interestedValues) {
   interestedValues = new Set(interestedValues);
